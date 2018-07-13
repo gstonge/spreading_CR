@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.0)
 
 # Configure the project
 #----------------------
@@ -25,26 +25,8 @@ link_directories(lib/)
 
 # Declare executables
 #--------------------
-add_executable( test_binary_tree src/test_binary_tree.cpp )
 add_executable( prevalence_SIS src/prevalence_SIS.cpp )
-add_executable( final_size_SIR src/final_size_SIR.cpp )
-add_executable(	time_SIS src/time_SIS.cpp )
-add_executable(	time_SIR src/time_SIR.cpp )
-add_executable( critical_time_SIS src/critical_time_SIS.cpp)
-add_executable( critical_time_SIR src/critical_time_SIR.cpp)
-add_executable( rejection_probability src/rejection_probability.cpp)
-
-
 
 # Link libraries
 #---------------
-target_link_libraries( test_binary_tree network )
 target_link_libraries( prevalence_SIS network )
-target_link_libraries( final_size_SIR network )
-target_link_libraries( time_SIS network)
-target_link_libraries( time_SIR network)
-target_link_libraries( critical_time_SIS network)
-target_link_libraries( critical_time_SIR network)
-target_link_libraries( rejection_probability network)
-
-
