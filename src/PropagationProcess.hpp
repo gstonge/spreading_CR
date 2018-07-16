@@ -26,7 +26,7 @@ public:
     PropagationProcess(
         std::vector<std::pair<NodeLabel, NodeLabel> >& edge_list,
         double transmission_rate, 
-	double recovery_rate,
+    	double recovery_rate,
         double waning_immunity_rate);
 
     //Accessors
@@ -36,9 +36,10 @@ public:
     	{return Inode_number_vector_;}
     std::vector<unsigned int> get_Rnode_number_vector() const
     	{return Rnode_number_vector_;}
+    bool is_absorbed();
 
     //Mutators
-    //void initialize();
+    void initialize(double fraction, unsigned int seed);
     void initialize(std::vector<NodeLabel>& Inode_vector,
 	unsigned int seed);
     //void reset();

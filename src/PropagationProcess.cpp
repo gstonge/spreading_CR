@@ -30,17 +30,42 @@ PropagationProcess::PropagationProcess(
     vector<pair<NodeLabel, NodeLabel> >& edge_list, 
     double transmission_rate, double recovery_rate, 
     double waning_immunity_rate) : network_(edge_list, transmission_rate, 
-    recovery_rate, waning_immunity_rate), time_vector_(),
-    Inode_number_vector_(), Rnode_number_vector_(), gen_(42)
+            recovery_rate, waning_immunity_rate), time_vector_(),
+        Inode_number_vector_(), Rnode_number_vector_(), gen_(42)
+        {
+        }
+
+/*---------------------------
+ *    accessors 
+ *---------------------------*/
+/**
+ * \brief Verify if the network is in an absorbing state
+ */
+bool PropagationProcess::is_absorbed() 
 {
+        return (network_.get_event_tree()).get_value() == 0;
 }
 
 /*---------------------------
  *     Mutators 
  *---------------------------*/
+/**
+* \brief Initialize the state of the system with randomly selected nodes
+* \param[in] Inode_vector vector of NodeLabel for each initially infected node 
+*/
+void PropagationProcess::initialize(double fraction, unsigned int seed)
+{
+    gen_.seed(seed);
+    infect_fraction(network_, fraction, gen_);
+    time_vector_.push_back(0);
+    Inode_number_vector_.push_back(network_.get_Inode_number());
+    Rnode_number_vector_.push_back(network_.get_Rnode_number());
+}
+
+
 
 /**
-* \brief Initialize the state of the system with infected nodes
+* \brief Initialize the state of the system with specified infected nodes
 * \param[in] Inode_vector vector of NodeLabel for each initially infected node 
 */
 void PropagationProcess::initialize(vector<NodeLabel>& Inode_vector, 
@@ -48,7 +73,7 @@ void PropagationProcess::initialize(vector<NodeLabel>& Inode_vector,
 {
     for (int i=0; i<Inode_vector.size(); i++)
     {
-	network_.infection(Inode_vector[i]);
+    	network_.infection(Inode_vector[i]);
     }
     gen_.seed(seed);
     time_vector_.push_back(0);
@@ -61,7 +86,7 @@ void PropagationProcess::initialize(vector<NodeLabel>& Inode_vector,
 */
 void PropagationProcess::next_state()
 {
-    if (network_.get_Inode_number() > 0)
+    if (not is_absorbed())
     {
 	double dt = 0;
     	bool new_state = false;
@@ -86,18 +111,13 @@ void PropagationProcess::next_state()
 */
 void PropagationProcess::evolve(double time_variation)
 {
-    bool reached_absorbing_state = false;
     double current_time_variation = 0;
     while (current_time_variation < time_variation and not 
-		    reached_absorbing_state)
+	   is_absorbed())
     {
 	next_state();
 	current_time_variation += time_vector_.back()-
 		time_vector_[time_vector_.size()-2];
-	if (Inode_number_vector_.back() == 0)
-	{
-	    reached_absorbing_state = true;
-	}
     }
 }
 
