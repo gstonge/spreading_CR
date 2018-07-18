@@ -82,6 +82,32 @@ void PropagationProcess::initialize(vector<NodeLabel>& Inode_vector,
 }
 
 /**
+* \brief Reset the process 
+*/
+void PropagationProcess::reset()
+{
+    Inode_number_vector_.clear();
+    Rnode_number_vector_.clear();
+    time_vector_.clear();
+    gen_.seed(42);
+    network_.reset();
+}
+
+/**
+* \brief Reset the process and set new rates 
+*/
+void PropagationProcess::reset(double transmission_rate, double recovery_rate,
+    double waning_immunity_rate)
+{
+    Inode_number_vector_.clear();
+    Rnode_number_vector_.clear();
+    time_vector_.clear();
+    gen_.seed(42);
+    network_.reset(transmission_rate, recovery_rate, waning_immunity_rate);
+}
+
+
+/**
 * \brief Evolution of the process for a single state transition
 */
 void PropagationProcess::next_state()

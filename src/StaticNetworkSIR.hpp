@@ -80,6 +80,9 @@ public:
         {return max_propensity_vector_[group_index];}
 
     //Mutators
+    void reset();
+    void reset(double transmission_rate, double recovery_rate,
+        double waning_immunity_rate);
     void infection(NodeLabel node);
     void recovery(GroupIndex group_index, size_t in_group_index);
     void immunity_loss(GroupIndex group_index, size_t in_group_index);

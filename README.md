@@ -12,7 +12,7 @@ Gillespie algorithm for the simulation of Markovian propagation processes on sta
 
 **On Windows**
 
-* Visual Studio 2015 (required for all Python versions, see notes below)
+* Visual Studio 2015 (required for all Python versions)
 * CMake >= 3.1
 
 

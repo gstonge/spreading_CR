@@ -17,10 +17,15 @@ PYBIND11_MODULE(gillespie_propagation, m)
             &PropagationProcess::get_Inode_number_vector)
         .def("get_Rnode_number_vector", 
             &PropagationProcess::get_Rnode_number_vector)
+        .def("is_absorbed", &PropagationProcess::is_absorbed)
         .def("initialize", (void (PropagationProcess::*)(double, unsigned int))
             &PropagationProcess::initialize)
         .def("initialize", (void (PropagationProcess::*)(vector<NodeLabel>&,
             unsigned int)) &PropagationProcess::initialize)
+        .def("reset", (void (PropagationProcess::*)()) 
+            &PropagationProcess::reset)
+        .def("reset", (void (PropagationProcess::*)(double, double, double)) 
+            &PropagationProcess::reset)
         .def("next_state", &PropagationProcess::next_state)
         .def("evolve", &PropagationProcess::evolve);
 }
