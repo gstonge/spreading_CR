@@ -57,12 +57,12 @@ class CMakeBuild(build_ext):
         subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
 
 setup(
-    name='gillespie-propagation',
+    name='spreading_CR',
     version='0.1',
     author='Guillaume St-Onge',
-    description='Simulation class for propagation using pybind11 and CMake',
+    description='Simulation module for spreading using pybind11 and CMake',
     long_description='',
-    ext_modules=[CMakeExtension('gillespie-propagation')],
+    ext_modules=[CMakeExtension('spreading_CR')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )

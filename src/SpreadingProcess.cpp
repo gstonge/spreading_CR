@@ -1,12 +1,12 @@
 /**
-* \file PropagationProcess.cpp
-* \brief Methods for the class PropagationProcess
+* \file SpreadingProcess.cpp
+* \brief Methods for the class SpreadingProcess
 * \author Guillaume St-Onge
 * \version 1.0
 * \date 03/02/2018
 */
 
-#include <PropagationProcess.hpp>
+#include <SpreadingProcess.hpp>
 #include <evolution.hpp>
 #include <iostream>
 
@@ -27,7 +27,7 @@ namespace net
 * \param[in] recovery_rate a double for the rate of recovery
 * \param[in] waning_immunity_rate a double for the rate a node gets immuned
 */
-PropagationProcess::PropagationProcess(
+SpreadingProcess::SpreadingProcess(
     vector<pair<NodeLabel, NodeLabel> >& edge_list, 
     double transmission_rate, double recovery_rate, 
     double waning_immunity_rate) : network_(edge_list, transmission_rate, 
@@ -42,7 +42,7 @@ PropagationProcess::PropagationProcess(
 /**
  * \brief Verify if the network is in an absorbing state
  */
-bool PropagationProcess::is_absorbed() 
+bool SpreadingProcess::is_absorbed() 
 {
     bool is_absorbed = false;
     if (network_.get_waning_immunity_rate() > 0)
@@ -66,7 +66,7 @@ bool PropagationProcess::is_absorbed()
 * \brief Initialize the state of the system with randomly selected nodes
 * \param[in] Inode_vector vector of NodeLabel for each initially infected node 
 */
-void PropagationProcess::initialize(double fraction, unsigned int seed)
+void SpreadingProcess::initialize(double fraction, unsigned int seed)
 {
     gen_.seed(seed);
     infect_fraction(network_, fraction, gen_);
@@ -81,7 +81,7 @@ void PropagationProcess::initialize(double fraction, unsigned int seed)
 * \brief Initialize the state of the system with specified infected nodes
 * \param[in] Inode_vector vector of NodeLabel for each initially infected node 
 */
-void PropagationProcess::initialize(vector<NodeLabel>& Inode_vector, 
+void SpreadingProcess::initialize(vector<NodeLabel>& Inode_vector, 
     unsigned int seed)
 {
     for (int i=0; i<Inode_vector.size(); i++)
@@ -97,7 +97,7 @@ void PropagationProcess::initialize(vector<NodeLabel>& Inode_vector,
 /**
 * \brief Reset the process 
 */
-void PropagationProcess::reset()
+void SpreadingProcess::reset()
 {
     Inode_number_vector_.clear();
     Rnode_number_vector_.clear();
@@ -110,7 +110,7 @@ void PropagationProcess::reset()
 /**
 * \brief Evolution of the process for a single state transition
 */
-void PropagationProcess::next_state()
+void SpreadingProcess::next_state()
 {
     if (not is_absorbed())
     {
@@ -135,7 +135,7 @@ void PropagationProcess::next_state()
 * \brief Evolution of the process for an inclusive time variation
 * \param[in] time_variation double representing the time variation 
 */
-void PropagationProcess::evolve(double time_variation)
+void SpreadingProcess::evolve(double time_variation)
 {
     double current_time_variation = 0;
     while (current_time_variation < time_variation and not 

@@ -1,13 +1,13 @@
 /**
-* \file PropagationProcess.hpp
-* \brief Header file for class PropagationProcess
+* \file SpreadingProcess.hpp
+* \brief Header file for class SpreadingProcess
 * \author Guillaume St-Onge
 * \version 1.0
 * \date 11/07/2018
 */
 
-#ifndef PROPAGATIONPROCESS_HPP_
-#define PROPAGATIONPROCESS_HPP_
+#ifndef SPREADINGPROCESS_HPP_
+#define SPREADINGPROCESS_HPP_
 
 #include <StaticNetworkSIR.hpp>
 #include <evolution.hpp>
@@ -16,14 +16,14 @@ namespace net
 {//start of namespace net
 
 /**
-* \class PropagationProcess PropagationProcess.hpp
-* \brief Process class for the simulation of propagation dynamics on networks.
+* \class SpreadingProcess SpreadingProcess.hpp
+* \brief Process class for the simulation of spreading dynamics on networks.
 */
-class PropagationProcess 
+class SpreadingProcess 
 {
 public:
     //Constructor
-    PropagationProcess(
+    SpreadingProcess(
         std::vector<std::pair<NodeLabel, NodeLabel> >& edge_list,
         double transmission_rate, 
     	double recovery_rate,
@@ -59,4 +59,4 @@ private:
 
 }//end of namespace net
 
-#endif /* PROPAGATIONPROCESS_HPP_ */
+#endif /* SPREADINGPROCESS_HPP_ */

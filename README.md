@@ -1,6 +1,6 @@
-# gillespie_propagation
+# spreading_CR
 
-Gillespie algorithm for the simulation of Markovian propagation processes on static complex networks using a composition and rejection scheme. The core is implemented in C++ for efficiency. A user friendly python interface is provided, thanks to pybind11 (https://github.com/pybind/pybind11).
+Gillespie algorithm for the simulation of Markovian spreading processes on static complex networks using a composition and rejection scheme. The core is implemented in C++ for efficiency. A user friendly python interface is provided, thanks to pybind11 (https://github.com/pybind/pybind11).
 
 ## Requirements
 
@@ -18,15 +18,15 @@ Gillespie algorithm for the simulation of Markovian propagation processes on sta
 
 First, clone this repository and the submodule (pybind11). The --recursive flag is needed to import correctly the pybind11 subdirectory.
 ```bash
-git clone --recursive https://github.com/gstonge/gillespie_propagation.git
+git clone --recursive https://github.com/gstonge/spreading_CR.git
 ```
 Second, use pip to install the module.
 ```bash
-pip install ./gillespie_propagation
+pip install ./spreading_CR
 ```
 or 
 ```bash
-pip install -e ./gillespie_propagation
+pip install -e ./spreading_CR
 ```
 for developer mode.
 
@@ -39,7 +39,7 @@ The following examples make use of the networkx module (https://github.com/netwo
 In this example, we consider the SIS model on an Erdős–Rényi random graph. A certain fraction of the nodes are infected initially at random. We draw the evolution of the prevalence as a function of time. 
 
 ```python
-from gillespie_propagation import PropagationProcess
+from spreading_CR import SpreadingProcess
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -57,17 +57,17 @@ waning_immunity_rate = np.inf  #rate at which recovered nodes become susceptible
 infected_fraction = 0.05       #Initial infected fraction - at random
 
 #initialize the propagation process
-pp = PropagationProcess(list(G.edges()), transmission_rate, recovery_rate, 
+sp = SpreadingProcess(list(G.edges()), transmission_rate, recovery_rate, 
     waning_immunity_rate)
-pp.initialize(infected_fraction, seed)
+sp.initialize(infected_fraction, seed)
 
 #simulate the process
 t = 20
-pp.evolve(t)
+sp.evolve(t)
 
 #get data vectors
-Inode_number_vector = pp.get_Inode_number_vector()
-time_vector = pp.get_time_vector()
+Inode_number_vector = sp.get_Inode_number_vector()
+time_vector = sp.get_time_vector()
 
 #format 
 prevalence_vector = [i/N for i in Inode_number_vector]
@@ -84,7 +84,7 @@ plt.show()
 In this example, we consider the SIR model on the Watts-Strogatz random graph. A certain specified list of nodes are initially infected. We sample the final size--the fraction of recovered nodes at the end--for different transmission rates. We draw the final size as a function of the transmission rate to discern the phase transition.
 
 ```python
-from gillespie_propagation import PropagationProcess
+from spreading_CR import SpreadingProcess
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -109,19 +109,19 @@ std_final_size_list = []
 
 for transmission_rate in transmission_rate_list:
     #initialize the propagation process
-    pp = PropagationProcess(list(G.edges()), transmission_rate, 
+    sp = SpreadingProcess(list(G.edges()), transmission_rate, 
                             recovery_rate, waning_immunity_rate)
     
     #get a sample of final size
     final_size_list = []
     for i in range(sample_size):
         #simulate until an absorbing state is reached
-        pp.initialize(infected_node_list, i)
-        pp.evolve(np.inf)
+        sp.initialize(Inode_list, i)
+        sp.evolve(np.inf)
         
         #get data and reset
-        final_size_list.append(pp.get_Rnode_number_vector()[-1]/N)
-        pp.reset()
+        final_size_list.append(sp.get_Rnode_number_vector()[-1]/N)
+        sp.reset()
     
     #get the statistics
     mean_final_size_list.append(np.mean(final_size_list))
