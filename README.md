@@ -1,7 +1,6 @@
 # gillespie_propagation
 
-Gillespie algorithm for the simulation of Markovian propagation processes on static complex networks using a composition and rejection scheme.
-
+Gillespie algorithm for the simulation of Markovian propagation processes on static complex networks using a composition and rejection scheme. The core is implemented in C++ for efficiency. A user friendly python interface is provided, thanks to pybind11 (https://github.com/pybind/pybind11).
 
 ## Requirements
 
@@ -15,10 +14,9 @@ Gillespie algorithm for the simulation of Markovian propagation processes on sta
 * Visual Studio 2015 (required for all Python versions)
 * CMake >= 3.1
 
-
 ## Installation
 
-First, clone this repository and the submodule (pybind11). 
+First, clone this repository and the submodule (pybind11). The --recursive flag is needed to import correctly the pybind11 subdirectory.
 ```bash
 git clone --recursive https://github.com/gstonge/gillespie_propagation.git
 ```
@@ -26,10 +24,11 @@ Second, use pip to install the module.
 ```bash
 pip install ./gillespie_propagation
 ```
-To install it in developer mode
+or 
 ```bash
 pip install -e ./gillespie_propagation
 ```
+for developer mode.
 
 ## Examples
 
@@ -82,7 +81,7 @@ plt.show()
 
 ### Phase transition : SIR model
 
-In this example, we consider the SIR model on the Watts-Strogatz random graph. A certain specified list of nodes are initially infected. We sample the final size--the fraction of recovered nodes in the end--for different value of transmission rate. We draw the final size as a function of the transmission rate to discern the phase transition.
+In this example, we consider the SIR model on the Watts-Strogatz random graph. A certain specified list of nodes are initially infected. We sample the final size--the fraction of recovered nodes at the end--for different transmission rates. We draw the final size as a function of the transmission rate to discern the phase transition.
 
 ```python
 from gillespie_propagation import PropagationProcess
