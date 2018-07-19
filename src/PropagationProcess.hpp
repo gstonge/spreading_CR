@@ -43,11 +43,8 @@ public:
     void initialize(std::vector<NodeLabel>& Inode_vector,
 	unsigned int seed);
     void reset();
-    void reset(double transmission_rate, double recovery_rate,
-        double waning_immunity_rate);
     void next_state();
     void evolve(double time_variation);
-    //void evolve_fixed_transition(int transition);
     
 
 private:

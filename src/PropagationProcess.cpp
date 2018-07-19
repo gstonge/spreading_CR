@@ -8,6 +8,7 @@
 
 #include <PropagationProcess.hpp>
 #include <evolution.hpp>
+#include <iostream>
 
 using namespace std;
 
@@ -43,8 +44,20 @@ PropagationProcess::PropagationProcess(
  */
 bool PropagationProcess::is_absorbed() 
 {
-        return (network_.get_event_tree()).get_value() == 0;
+    bool is_absorbed = false;
+    if (network_.get_waning_immunity_rate() > 0)
+    {
+        //absorbing state is all node susceptible
+        is_absorbed = (network_.get_Inode_number() == 0 and network_.get_Rnode_number() == 0);
+    }
+    else
+    {
+        //absorbing state is all node susceptible or recovered
+        is_absorbed = network_.get_Inode_number() == 0;
+    }
+    return is_absorbed;
 }
+
 
 /*---------------------------
  *     Mutators 
@@ -93,19 +106,6 @@ void PropagationProcess::reset()
     network_.reset();
 }
 
-/**
-* \brief Reset the process and set new rates 
-*/
-void PropagationProcess::reset(double transmission_rate, double recovery_rate,
-    double waning_immunity_rate)
-{
-    Inode_number_vector_.clear();
-    Rnode_number_vector_.clear();
-    time_vector_.clear();
-    gen_.seed(42);
-    network_.reset(transmission_rate, recovery_rate, waning_immunity_rate);
-}
-
 
 /**
 * \brief Evolution of the process for a single state transition
@@ -114,17 +114,17 @@ void PropagationProcess::next_state()
 {
     if (not is_absorbed())
     {
-	double dt = 0;
+	    double dt = 0;
     	bool new_state = false;
     	while (not new_state)
     	{
-	    dt += get_lifetime(network_, gen_);
-	    update_event(network_, gen_);
+    	    dt += get_lifetime(network_, gen_);
+    	    update_event(network_, gen_);
             if (network_.get_Inode_number() != Inode_number_vector_.back())
-	    {
-	        new_state = true;
-	    }
-	}    
+    	    {
+    	        new_state = true;
+    	    }
+    	}    
         time_vector_.push_back(time_vector_.back()+dt);
         Inode_number_vector_.push_back(network_.get_Inode_number());	
         Rnode_number_vector_.push_back(network_.get_Rnode_number());
@@ -141,8 +141,8 @@ void PropagationProcess::evolve(double time_variation)
     while (current_time_variation < time_variation and not 
 	   is_absorbed())
     {
-	next_state();
-	current_time_variation += time_vector_.back()-
+	    next_state();
+    	current_time_variation += time_vector_.back()-
 		time_vector_[time_vector_.size()-2];
     }
 }

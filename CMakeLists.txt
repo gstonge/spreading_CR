@@ -16,3 +16,4 @@ file( GLOB_RECURSE LIB_HEADERS src/*.hpp)
 # Generate library
 #-----------------------------
 pybind11_add_module(gillespie_propagation ${LIB_SOURCES} ${LIB_HEADERS})
+

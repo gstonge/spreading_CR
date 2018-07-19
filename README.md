@@ -80,4 +80,62 @@ plt.ylabel(r'Prevalence')
 plt.show()
 ```
 
+### Phase transition : SIR model
 
+In this example, we consider the SIR model on the Watts-Strogatz random graph. A certain specified list of nodes are initially infected. We sample the final size--the fraction of recovered nodes in the end--for different value of transmission rate. We draw the final size as a function of the transmission rate to discern the phase transition.
+
+```python
+from gillespie_propagation import PropagationProcess
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+
+#create a random graph using networkx
+seed = 42
+N = 1000
+k = 10
+p = 0.05
+G = nx.watts_strogatz_graph(N, k, p, seed=seed)
+
+#propagation parameters
+transmission_rate_list = np.linspace(0.0,0.5,10)         
+recovery_rate = 1           #rate at which infected nodes become recovered
+waning_immunity_rate = 0    #rate at which recovered nodes become susceptible
+Inode_list = np.arange(0,5) #Initially infected nodes
+
+#prepare the sampling of the final size
+sample_size = 1000
+mean_final_size_list = []
+std_final_size_list = []
+
+for transmission_rate in transmission_rate_list:
+    #initialize the propagation process
+    pp = PropagationProcess(list(G.edges()), transmission_rate, 
+                            recovery_rate, waning_immunity_rate)
+    
+    #get a sample of final size
+    final_size_list = []
+    for i in range(sample_size):
+        #simulate until an absorbing state is reached
+        pp.initialize(infected_node_list, i)
+        pp.evolve(np.inf)
+        
+        #get data and reset
+        final_size_list.append(pp.get_Rnode_number_vector()[-1]/N)
+        pp.reset()
+    
+    #get the statistics
+    mean_final_size_list.append(np.mean(final_size_list))
+    std_final_size_list.append(np.std(final_size_list))
+
+#get the approximate std on the mean
+std_mean_final_size_list = [std/np.sqrt(sample_size) 
+                            for std in std_final_size_list]
+
+#draw phase transition
+plt.errorbar(transmission_rate_list, mean_final_size_list, 
+             yerr = std_mean_final_size_list, fmt = 'o-')
+plt.xlabel(r'Transmission rate')
+plt.ylabel(r'Mean final size')
+plt.show()
+```

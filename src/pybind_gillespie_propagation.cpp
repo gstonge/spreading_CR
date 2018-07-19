@@ -22,10 +22,7 @@ PYBIND11_MODULE(gillespie_propagation, m)
             &PropagationProcess::initialize)
         .def("initialize", (void (PropagationProcess::*)(vector<NodeLabel>&,
             unsigned int)) &PropagationProcess::initialize)
-        .def("reset", (void (PropagationProcess::*)()) 
-            &PropagationProcess::reset)
-        .def("reset", (void (PropagationProcess::*)(double, double, double)) 
-            &PropagationProcess::reset)
+        .def("reset", &PropagationProcess::reset)
         .def("next_state", &PropagationProcess::next_state)
         .def("evolve", &PropagationProcess::evolve);
 }
