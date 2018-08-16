@@ -60,7 +60,8 @@ setup(
     name='spreading_CR',
     version='0.1',
     author='Guillaume St-Onge',
-    description='Simulation module for spreading using pybind11 and CMake',
+    description="""Simulation module for spreading processes on networks 
+    using pybind11 and CMake""",
     long_description='',
     ext_modules=[CMakeExtension('spreading_CR')],
     cmdclass=dict(build_ext=CMakeBuild),
