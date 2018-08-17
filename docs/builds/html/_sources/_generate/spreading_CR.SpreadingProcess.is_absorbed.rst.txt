@@ -1,0 +1,6 @@
+spreading\_CR.SpreadingProcess.is\_absorbed
+===========================================
+
+.. currentmodule:: spreading_CR
+
+.. automethod:: SpreadingProcess.is_absorbed

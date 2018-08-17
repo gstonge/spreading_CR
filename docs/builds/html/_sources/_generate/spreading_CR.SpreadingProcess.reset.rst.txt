@@ -1,0 +1,6 @@
+spreading\_CR.SpreadingProcess.reset
+====================================
+
+.. currentmodule:: spreading_CR
+
+.. automethod:: SpreadingProcess.reset

@@ -1,0 +1,6 @@
+spreading\_CR.SpreadingProcess.get\_time\_vector
+================================================
+
+.. currentmodule:: spreading_CR
+
+.. automethod:: SpreadingProcess.get_time_vector

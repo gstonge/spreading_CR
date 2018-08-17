@@ -1,0 +1,6 @@
+spreading\_CR.SpreadingProcess.evolve
+=====================================
+
+.. currentmodule:: spreading_CR
+
+.. automethod:: SpreadingProcess.evolve

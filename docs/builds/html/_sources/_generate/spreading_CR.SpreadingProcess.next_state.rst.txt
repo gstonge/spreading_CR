@@ -1,0 +1,6 @@
+spreading\_CR.SpreadingProcess.next\_state
+==========================================
+
+.. currentmodule:: spreading_CR
+
+.. automethod:: SpreadingProcess.next_state

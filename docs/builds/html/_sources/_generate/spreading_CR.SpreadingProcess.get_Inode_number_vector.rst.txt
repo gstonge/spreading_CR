@@ -1,0 +1,6 @@
+spreading\_CR.SpreadingProcess.get\_Inode\_number\_vector
+=========================================================
+
+.. currentmodule:: spreading_CR
+
+.. automethod:: SpreadingProcess.get_Inode_number_vector

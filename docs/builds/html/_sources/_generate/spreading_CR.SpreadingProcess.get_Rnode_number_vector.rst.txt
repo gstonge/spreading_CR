@@ -1,0 +1,6 @@
+spreading\_CR.SpreadingProcess.get\_Rnode\_number\_vector
+=========================================================
+
+.. currentmodule:: spreading_CR
+
+.. automethod:: SpreadingProcess.get_Rnode_number_vector

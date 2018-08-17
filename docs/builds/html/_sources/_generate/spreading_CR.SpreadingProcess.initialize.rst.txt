@@ -1,0 +1,6 @@
+spreading\_CR.SpreadingProcess.initialize
+=========================================
+
+.. currentmodule:: spreading_CR
+
+.. automethod:: SpreadingProcess.initialize

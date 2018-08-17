@@ -6,7 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = spreading_CR
 SOURCEDIR     = .
-BUILDDIR      = build
+BUILDDIR      = builds
 
 # Put it first so that "make" without argument is like "make help".
 help:
