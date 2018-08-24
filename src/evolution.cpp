@@ -77,12 +77,7 @@ void update_event(StaticNetworkSIR& net, RNGType& gen,
 
 	//Determine which type of event
 	NodeLabel node = propensity_group[in_group_index].first;
-	if (net.is_recovered(node) and net.get_waning_immunity_rate() > 0)
-	{
-		//immunity loss event
-		net.immunity_loss(group_index, in_group_index);
-	}
-	else
+    if (net.is_infected(node))
 	{
 		//the node is infected - infection or recovery
 		double r1 = random_01(gen);
@@ -105,6 +100,11 @@ void update_event(StaticNetworkSIR& net, RNGType& gen,
 				net.infection(neighbor_node);
 			}
 		}
+	}
+    else
+	{
+		//immunity loss event
+		net.immunity_loss(group_index, in_group_index);
 	}
 }
 
