@@ -8,6 +8,7 @@
 #include <iostream>
 #include <evolution.hpp>
 #include <utility>
+#include <cmath>
 
 using namespace std;
 
@@ -20,10 +21,10 @@ namespace net
  * \param[in] net a reference to an object StaticNetworkSIR
  * \param[in] fraction a double representing the fraction to infect
  */
-void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen)
+void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen,
+        uniform_real_distribution<double>& random_01)
 {
 	unsigned int number_of_infection = floor(net.size()*fraction);
-	uniform_real_distribution<double> random_01(0.,1.);
 	NodeLabel i;
 	while (net.get_Inode_number() < number_of_infection)
 	{
@@ -40,9 +41,9 @@ void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen)
  * \param[in] net a reference to an object StaticNetworkSIR
  * \param[in] gen a reference to a random number generator
  */
-void update_event(StaticNetworkSIR& net, RNGType& gen)
+void update_event(StaticNetworkSIR& net, RNGType& gen,
+        uniform_real_distribution<double>& random_01)
 {
-	uniform_real_distribution<double> random_01(0.,1.);
 	GroupIndex group_index = (net.get_event_tree()).get_leaf_index(
 		random_01(gen));
 
@@ -107,11 +108,10 @@ void update_event(StaticNetworkSIR& net, RNGType& gen)
  * \param[in] net a reference to an object StaticNetworkSIR
  * \param[in] gen a reference to a RNG
  */
-double get_lifetime(StaticNetworkSIR& net, RNGType& gen)
+double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
+        uniform_real_distribution<double>& random_01)
 {
-	exponential_distribution<double> random_lifetime(
-		(net.get_event_tree()).get_value());
-	return random_lifetime(gen);
+	return (-log(random_01(gen))/(net.get_event_tree()).get_value());
 }
 
 /**
@@ -121,7 +121,7 @@ double get_lifetime(StaticNetworkSIR& net, RNGType& gen)
  * \param[in] history_vector vector of network state
  * \param[in] gen a reference to a random number generator
  */
-void update_history(StaticNetworkSIR& net, unsigned int max_configuration, 
+void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
 	vector<Configuration>& history_vector, RNGType& gen)
 {
 	size_t M = history_vector.size();
@@ -130,7 +130,7 @@ void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
 		uniform_int_distribution<int> random_index(0, M-1);
 		size_t index = random_index(gen);
 		swap(history_vector[index],history_vector[M-1]);
-		history_vector.pop_back();	
+		history_vector.pop_back();
 	}
 	history_vector.push_back(Configuration());
 	net.get_configuration_copy(history_vector[M-1]);

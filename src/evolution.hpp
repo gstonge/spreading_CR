@@ -15,17 +15,20 @@
 namespace net
 {//start of namespace net
 
-//define type 
+//define type
 typedef std::mt19937 RNGType;
 
 //Static networks evolution
-void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen);
+void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen,
+        std::uniform_real_distribution<double>& random_01);
 
-void update_event(StaticNetworkSIR& net, RNGType& gen);
+void update_event(StaticNetworkSIR& net, RNGType& gen,
+        std::uniform_real_distribution<double>& random_01);
 
-double get_lifetime(StaticNetworkSIR& net, RNGType& gen);
+double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
+        std::uniform_real_distribution<double>& random_01);
 
-void update_history(StaticNetworkSIR& net, unsigned int max_configuration, 
+void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
 	std::vector<Configuration>& history_vector, RNGType& gen);
 
 void get_from_history(StaticNetworkSIR& net,

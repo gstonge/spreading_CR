@@ -19,13 +19,13 @@ namespace net
 * \class SpreadingProcess SpreadingProcess.hpp
 * \brief Process class for the simulation of spreading dynamics on networks.
 */
-class SpreadingProcess 
+class SpreadingProcess
 {
 public:
     //Constructor
     SpreadingProcess(
         std::vector<std::pair<NodeLabel, NodeLabel> >& edge_list,
-        double transmission_rate, 
+        double transmission_rate,
     	double recovery_rate,
         double waning_immunity_rate);
 
@@ -45,11 +45,11 @@ public:
     void reset();
     void next_state();
     void evolve(double time_variation);
-    
 
 private:
     StaticNetworkSIR network_;
     RNGType gen_;
+    std::uniform_real_distribution<double> random_01_;
     //simulation results members
     std::vector<double> time_vector_;
     std::vector<unsigned int> Inode_number_vector_;
