@@ -54,6 +54,9 @@ public:
         {return state_vector_[node] == 1;}
     const bool is_recovered(NodeLabel node)
         {return state_vector_[node] == 2;}
+    const bool is_SIRS()
+        {return (waning_immunity_rate_ > 0 and
+                not std::isinf(waning_immunity_rate_));}
 
     double get_transmission_rate() const
         {return transmission_rate_;}
@@ -71,8 +74,11 @@ public:
         {return Rnode_number_;}
     BinaryTree& get_event_tree()
         {return event_tree_;}
-    GroupIndex get_group_index(double propensity) const
-        {return hash_(propensity);}
+    //GroupIndex get_group_index(double propensity) const
+     //   {return hash_(propensity);}
+   // GroupIndex get_group_index(NodeLabel node) const
+    //    {return mapping_vector_.at(((is_recovered(node) and is_SIRS())
+     //           ? 0 : degree(node)));}
     const PropensityGroup& get_propensity_group(GroupIndex group_index) const
         {return propensity_group_map_.at(group_index);}
     void get_configuration_copy(Configuration& empty_configuration) const;
@@ -93,6 +99,7 @@ private:
     double waning_immunity_rate_;
     HashPropensity hash_;
     std::vector<double> max_propensity_vector_; //max propensity for each group
+    std::vector<GroupIndex> mapping_vector_;
     //Varying members
     std::vector<StateLabel> state_vector_;
     BinaryTree event_tree_;

@@ -36,7 +36,7 @@ StaticNetworkSIR::StaticNetworkSIR(
     state_vector_(Network::size(),0), Inode_number_(0), Rnode_number_(0),
     transmission_rate_(transmission_rate), recovery_rate_(recovery_rate),
     waning_immunity_rate_(waning_immunity_rate), event_tree_(), hash_(1.,1.),
-    max_propensity_vector_(), propensity_group_map_()
+    max_propensity_vector_(), propensity_group_map_(), mapping_vector_()
 {
     //Determine minimal and maximal degree
     size_t degree_min = degree(0);
@@ -56,8 +56,7 @@ StaticNetworkSIR::StaticNetworkSIR(
     //Get min, max propensity and number of group
     double propensity_max;
     double propensity_min;
-    if(waning_immunity_rate_ == 0. or std::isinf(waning_immunity_rate_)
-        or recovery_rate_ == 0.)
+    if(not is_SIRS())
     {
         //SI, SIR or SIS dynamics
         propensity_max = transmission_rate_*degree_max + recovery_rate_;
@@ -95,6 +94,21 @@ StaticNetworkSIR::StaticNetworkSIR(
     }
     max_propensity_vector_.pop_back();
     max_propensity_vector_.push_back(propensity_max);
+
+    //Set mapping vector for the groups
+    mapping_vector_.resize(1+degree_max);
+    if (is_SIRS())
+    {
+        mapping_vector_[0] = hash_(waning_immunity_rate_);
+    }
+    else
+    {
+        mapping_vector_[0] = 0; //it wont be used anyway
+    }
+    for (int k = 1; k <= degree_max; k++)
+    {
+        mapping_vector_[k] = hash_(transmission_rate_*k + recovery_rate_);
+    }
 }
 
 /*---------------------------
@@ -163,7 +177,7 @@ void StaticNetworkSIR::infection(NodeLabel node)
 {
     state_vector_[node] = 1;
     double propensity = transmission_rate_*degree(node) + recovery_rate_;
-    GroupIndex group_index = get_group_index(propensity);
+    GroupIndex group_index = mapping_vector_.at(degree(node));
     propensity_group_map_[group_index].push_back(
         pair<NodeLabel,double>(node,propensity));
     event_tree_.update_value(group_index, propensity);
@@ -198,7 +212,7 @@ void StaticNetworkSIR::recovery(GroupIndex group_index,
         {
             //node can become again susceptible
             double new_propensity = waning_immunity_rate_;
-            GroupIndex new_group_index = get_group_index(new_propensity);
+            GroupIndex new_group_index = mapping_vector_[0];
             propensity_group_map_[new_group_index].push_back(
                 pair<NodeLabel,double>(node,new_propensity));
             event_tree_.update_value(new_group_index, new_propensity);
