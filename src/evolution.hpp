@@ -11,12 +11,14 @@
 
 #include <StaticNetworkSIR.hpp>
 #include <random>
+#include "pcg-cpp/include/pcg_random.hpp"
 
 namespace net
 {//start of namespace net
 
 //define type
-typedef std::mt19937 RNGType;
+//typedef std::mt19937 RNGType;
+typedef pcg32 RNGType;
 
 //Static networks evolution
 void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen,

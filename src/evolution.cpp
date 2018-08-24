@@ -111,7 +111,7 @@ void update_event(StaticNetworkSIR& net, RNGType& gen,
 double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
         uniform_real_distribution<double>& random_01)
 {
-	return (-log(random_01(gen))/(net.get_event_tree()).get_value());
+    return (-log(random_01(gen))/(net.get_event_tree()).get_value());
 }
 
 /**
