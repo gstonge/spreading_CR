@@ -15,6 +15,11 @@ using namespace std;
 namespace net
 {
 
+uint32_t INDEX_MAP(uint32_t NUM)
+{
+    return ((NUM == 4294967296) ? (TABLE_SIZE-1) :
+            uint32_t(TABLE_SIZE*double(NUM)/4294967296));
+}
 
 /**
  * \brief Infect a fraction of the nodes
@@ -112,6 +117,17 @@ double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
         uniform_real_distribution<double>& random_01)
 {
     return (-log(random_01(gen))/(net.get_event_tree()).get_value());
+}
+
+/**
+ * \brief return the average life time for the configuration
+ * \param[in] net a reference to an object StaticNetworkSIR
+ * \param[in] gen a reference to a RNG
+ */
+double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
+       double (&log_table)[TABLE_SIZE])
+{
+    return (log_table[INDEX_MAP(gen())]/(net.get_event_tree()).get_value());
 }
 
 /**

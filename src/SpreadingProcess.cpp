@@ -34,8 +34,13 @@ SpreadingProcess::SpreadingProcess(
             recovery_rate, waning_immunity_rate), time_vector_(),
         Inode_number_vector_(), Rnode_number_vector_(), gen_(42),
         random_01_(0.,1.)
-        {
-        }
+{
+    // construct the log table
+    for (int i = 0; i < TABLE_SIZE; i++)
+    {
+        log_table_[i] = -log((i+0.5)/TABLE_SIZE);
+    }
+}
 
 /*---------------------------
  *    accessors
@@ -65,7 +70,7 @@ bool SpreadingProcess::is_absorbed()
  *---------------------------*/
 /**
 * \brief Initialize the state of the system with randomly selected nodes
-* \param[in] Inode_vector vector of NodeLabel for each initially infected node 
+* \param[in] Inode_vector vector of NodeLabel for each initially infected node
 */
 void SpreadingProcess::initialize(double fraction, unsigned int seed)
 {
@@ -76,11 +81,9 @@ void SpreadingProcess::initialize(double fraction, unsigned int seed)
     Rnode_number_vector_.push_back(network_.get_Rnode_number());
 }
 
-
-
 /**
 * \brief Initialize the state of the system with specified infected nodes
-* \param[in] Inode_vector vector of NodeLabel for each initially infected node 
+* \param[in] Inode_vector vector of NodeLabel for each initially infected node
 */
 void SpreadingProcess::initialize(vector<NodeLabel>& Inode_vector,
     unsigned int seed)
@@ -107,7 +110,6 @@ void SpreadingProcess::reset()
     network_.reset();
 }
 
-
 /**
 * \brief Evolution of the process for a single state transition
 */
@@ -119,7 +121,7 @@ void SpreadingProcess::next_state()
     	bool new_state = false;
     	while (not new_state)
     	{
-    	    dt += get_lifetime(network_, gen_, random_01_);
+    	    dt += get_lifetime(network_, gen_, log_table_);
     	    update_event(network_, gen_, random_01_);
             if (network_.get_Inode_number() != Inode_number_vector_.back())
     	    {

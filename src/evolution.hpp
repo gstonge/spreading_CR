@@ -20,7 +20,10 @@ namespace net
 //typedef std::mt19937 RNGType;
 typedef pcg32 RNGType;
 
-//Static networks evolution
+constexpr const uint32_t TABLE_SIZE = 100000;
+uint32_t INDEX_MAP(uint32_t NUM);
+
+
 void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen,
         std::uniform_real_distribution<double>& random_01);
 
@@ -29,6 +32,9 @@ void update_event(StaticNetworkSIR& net, RNGType& gen,
 
 double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
         std::uniform_real_distribution<double>& random_01);
+
+double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
+        double (&log_table)[TABLE_SIZE]);
 
 void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
 	std::vector<Configuration>& history_vector, RNGType& gen);

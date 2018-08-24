@@ -30,11 +30,11 @@ namespace net
 * become susceptible again
 */
 StaticNetworkSIR::StaticNetworkSIR(
-    vector<pair<NodeLabel, NodeLabel> >& edge_list, 
-    double transmission_rate, double recovery_rate, 
-    double waning_immunity_rate) : 	Network(edge_list), 
+    vector<pair<NodeLabel, NodeLabel> >& edge_list,
+    double transmission_rate, double recovery_rate,
+    double waning_immunity_rate) : 	Network(edge_list),
     state_vector_(Network::size(),0), Inode_number_(0), Rnode_number_(0),
-    transmission_rate_(transmission_rate), recovery_rate_(recovery_rate), 
+    transmission_rate_(transmission_rate), recovery_rate_(recovery_rate),
     waning_immunity_rate_(waning_immunity_rate), event_tree_(), hash_(1.,1.),
     max_propensity_vector_(), propensity_group_map_()
 {
@@ -56,7 +56,7 @@ StaticNetworkSIR::StaticNetworkSIR(
     //Get min, max propensity and number of group
     double propensity_max;
     double propensity_min;
-    if(waning_immunity_rate_ == 0. or std::isinf(waning_immunity_rate_) 
+    if(waning_immunity_rate_ == 0. or std::isinf(waning_immunity_rate_)
         or recovery_rate_ == 0.)
     {
         //SI, SIR or SIS dynamics
@@ -66,9 +66,9 @@ StaticNetworkSIR::StaticNetworkSIR(
     else
     {
         //SIRS dynamics
-        propensity_max = max(transmission_rate_*degree_max + recovery_rate_, 
+        propensity_max = max(transmission_rate_*degree_max + recovery_rate_,
             waning_immunity_rate_);
-        propensity_min = min(transmission_rate_*degree_min + recovery_rate_, 
+        propensity_min = min(transmission_rate_*degree_min + recovery_rate_,
             waning_immunity_rate_);
     }
     size_t number_of_group = max(ceil(log2(propensity_max/propensity_min)),1.);
@@ -78,7 +78,7 @@ StaticNetworkSIR::StaticNetworkSIR(
     event_tree_ = BinaryTree(number_of_group);
 
     //reserve size for each propensity group
-    for (size_t group_index = 0; group_index < number_of_group; 
+    for (size_t group_index = 0; group_index < number_of_group;
         ++group_index)
     {
         propensity_group_map_[group_index] = PropensityGroup();
@@ -91,7 +91,7 @@ StaticNetworkSIR::StaticNetworkSIR(
         ++group_index)
     {
         max_propensity_vector_.push_back(
-            2*max_propensity_vector_[group_index]);      
+            2*max_propensity_vector_[group_index]);
     }
     max_propensity_vector_.pop_back();
     max_propensity_vector_.push_back(propensity_max);
@@ -125,7 +125,7 @@ void StaticNetworkSIR::get_configuration_copy(
 void StaticNetworkSIR::reset()
 {
     //clean the event tree and propensity groups
-    for (auto iter = propensity_group_map_.begin(); 
+    for (auto iter = propensity_group_map_.begin();
         iter != propensity_group_map_.end(); iter ++)
     {
         GroupIndex group_index = iter->first;
@@ -142,7 +142,7 @@ void StaticNetworkSIR::reset()
             {
                 immunity_loss(group_index, in_group_index);
             }
-        }    
+        }
     }
     //for SIR model, one needs to set manually recovered nodes to susceptible
     for (NodeLabel node = 0; node < size(); node++)
@@ -161,21 +161,13 @@ void StaticNetworkSIR::reset()
 */
 void StaticNetworkSIR::infection(NodeLabel node)
 {
-    if (is_susceptible(node))
-    {
-        state_vector_[node] = 1;
-        double propensity = transmission_rate_*degree(node) + recovery_rate_;
-        GroupIndex group_index = get_group_index(propensity);
-        propensity_group_map_[group_index].push_back(
-            pair<NodeLabel,double>(node,propensity));
-        event_tree_.update_value(group_index, propensity);
-        Inode_number_ += 1;
-    }
-    else
-    {
-        cout << "node is not susceptible" << endl;
-        cout << "node state : " << state_vector_[node] << endl;
-    }
+    state_vector_[node] = 1;
+    double propensity = transmission_rate_*degree(node) + recovery_rate_;
+    GroupIndex group_index = get_group_index(propensity);
+    propensity_group_map_[group_index].push_back(
+        pair<NodeLabel,double>(node,propensity));
+    event_tree_.update_value(group_index, propensity);
+    Inode_number_ += 1;
 }
 
 /**
@@ -183,40 +175,33 @@ void StaticNetworkSIR::infection(NodeLabel node)
 * \param[in] group_index Index for the propensity group
 * \param[in] in_group_index Index for the node inside the propensity group
 */
-void StaticNetworkSIR::recovery(GroupIndex group_index, 
+void StaticNetworkSIR::recovery(GroupIndex group_index,
     size_t in_group_index)
 {
     PropensityGroup& propensity_group = propensity_group_map_[group_index];
     NodeLabel node = propensity_group[in_group_index].first;
     double propensity = propensity_group[in_group_index].second;
-    if (not is_infected(node))
+    Inode_number_ -= 1;
+    swap(propensity_group[in_group_index], propensity_group.back());
+    propensity_group.pop_back();
+    event_tree_.update_value(group_index, -propensity);
+    if (std::isinf(waning_immunity_rate_))
     {
-        cout << "node is not infected" << endl;
+        //node gets susceptible instantly, no new propensity
+        state_vector_[node] = 0;
     }
     else
     {
-        Inode_number_ -= 1;
-        swap(propensity_group[in_group_index], propensity_group.back());
-        propensity_group.pop_back();
-        event_tree_.update_value(group_index, -propensity);
-        if (std::isinf(waning_immunity_rate_))
+        state_vector_[node] = 2;
+        Rnode_number_ += 1;
+        if (waning_immunity_rate_ > 0)
         {
-            //node gets susceptible instantly, no new propensity
-            state_vector_[node] = 0;
-        }
-        else
-        {
-            state_vector_[node] = 2;
-            Rnode_number_ += 1;
-            if (waning_immunity_rate_ > 0) 
-            {
-                //node can become again susceptible
-                double new_propensity = waning_immunity_rate_;
-                GroupIndex new_group_index = get_group_index(new_propensity);
-                propensity_group_map_[new_group_index].push_back(
-                    pair<NodeLabel,double>(node,new_propensity));
-                event_tree_.update_value(new_group_index, new_propensity);
-            }
+            //node can become again susceptible
+            double new_propensity = waning_immunity_rate_;
+            GroupIndex new_group_index = get_group_index(new_propensity);
+            propensity_group_map_[new_group_index].push_back(
+                pair<NodeLabel,double>(node,new_propensity));
+            event_tree_.update_value(new_group_index, new_propensity);
         }
     }
 }
@@ -226,24 +211,17 @@ void StaticNetworkSIR::recovery(GroupIndex group_index,
 * \param[in] group_index Index for the propensity group
 * \param[in] in_group_index Index for the node inside the propensity group
 */
-void StaticNetworkSIR::immunity_loss(GroupIndex group_index, 
+void StaticNetworkSIR::immunity_loss(GroupIndex group_index,
     size_t in_group_index)
 {
     PropensityGroup& propensity_group = propensity_group_map_[group_index];
     NodeLabel node = propensity_group[in_group_index].first;
     double propensity = propensity_group[in_group_index].second;
-    if (not is_recovered(node))
-    {
-        cout << "node is not recovered" << endl;
-    }
-    else
-    {
-        state_vector_[node] = 0;
-        swap(propensity_group[in_group_index], propensity_group.back());
-        propensity_group.pop_back();
-        event_tree_.update_value(group_index, -1*propensity);
-        Rnode_number_ -= 1;
-    }
+    state_vector_[node] = 0;
+    swap(propensity_group[in_group_index], propensity_group.back());
+    propensity_group.pop_back();
+    event_tree_.update_value(group_index, -propensity);
+    Rnode_number_ -= 1;
 }
 
 /**

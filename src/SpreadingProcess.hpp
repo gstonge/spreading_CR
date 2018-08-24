@@ -50,6 +50,7 @@ private:
     StaticNetworkSIR network_;
     RNGType gen_;
     std::uniform_real_distribution<double> random_01_;
+    double log_table_[TABLE_SIZE];
     //simulation results members
     std::vector<double> time_vector_;
     std::vector<unsigned int> Inode_number_vector_;

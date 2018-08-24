@@ -20,7 +20,7 @@ namespace net
 {//start of namespace net
 
 //Define new types
-typedef unsigned int StateLabel; 
+typedef unsigned int StateLabel;
 typedef std::vector<std::pair<NodeLabel,double> > PropensityGroup;
 typedef size_t GroupIndex;
 
@@ -31,7 +31,7 @@ struct Configuration
     BinaryTree event_tree;
     std::unordered_map<GroupIndex,PropensityGroup> propensity_group_map;
     std::size_t Inode_number;
-    std::size_t Rnode_number;    
+    std::size_t Rnode_number;
 };
 
 /**
@@ -61,13 +61,13 @@ public:
         {return recovery_rate_;}
     double get_waning_immunity_rate() const
         {return waning_immunity_rate_;}
-    double prevalence() const 
+    double prevalence() const
         {return ((1.*Inode_number_)/Network::size());}
     double incidence() const
         {return ((1.*Rnode_number_)/Network::size());}
-    std::size_t get_Inode_number() const 
+    std::size_t get_Inode_number() const
         {return Inode_number_;}
-    std::size_t get_Rnode_number() const 
+    std::size_t get_Rnode_number() const
         {return Rnode_number_;}
     BinaryTree& get_event_tree()
         {return event_tree_;}
