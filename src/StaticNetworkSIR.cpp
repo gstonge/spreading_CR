@@ -36,8 +36,32 @@ StaticNetworkSIR::StaticNetworkSIR(
     state_vector_(Network::size(),0), Inode_number_(0), Rnode_number_(0),
     transmission_rate_(transmission_rate), recovery_rate_(recovery_rate),
     waning_immunity_rate_(waning_immunity_rate), event_tree_(), hash_(1.,1.),
-    max_propensity_vector_(), propensity_group_map_(), mapping_vector_()
+    max_propensity_vector_(), propensity_group_map_(), mapping_vector_(),
+    is_SI_(false), is_SIS_(false), is_SIRS_(false), is_SIR_(true)
 {
+    //Identify the model
+    if(recovery_rate_ == 0)
+    {
+        is_SI_ = true;
+    }
+    else
+    {
+        if (waning_immunity_rate_ > 0)
+        {
+            if (isinf(waning_immunity_rate_))
+            {
+                is_SIS_ = true;
+            }
+            else
+            {
+                is_SIRS_ = true;
+            }
+        }
+        else
+        {
+            is_SIR_ = true;
+        }
+    }
     //Determine minimal and maximal degree
     size_t degree_min = degree(0);
     size_t degree_max = degree(0);
@@ -56,7 +80,7 @@ StaticNetworkSIR::StaticNetworkSIR(
     //Get min, max propensity and number of group
     double propensity_max;
     double propensity_min;
-    if(not is_SIRS())
+    if(not is_SIRS_)
     {
         //SI, SIR or SIS dynamics
         propensity_max = transmission_rate_*degree_max + recovery_rate_;
@@ -97,7 +121,7 @@ StaticNetworkSIR::StaticNetworkSIR(
 
     //Set mapping vector for the groups
     mapping_vector_.resize(1+degree_max);
-    if (is_SIRS())
+    if (is_SIRS_)
     {
         mapping_vector_[0] = hash_(waning_immunity_rate_);
     }
@@ -158,13 +182,16 @@ void StaticNetworkSIR::reset()
             }
         }
     }
-    //for SIR model, one needs to set manually recovered nodes to susceptible
-    for (NodeLabel node = 0; node < size(); node++)
+    if(is_SIR_)
     {
-        if (is_recovered(node))
+        //for SIR model, one needs to set manually recovered nodes to susceptible
+        for (NodeLabel node = 0; node < size(); node++)
         {
-            Rnode_number_ -= 1;
-            state_vector_[node] = 0;
+            if (is_recovered(node))
+            {
+                Rnode_number_ -= 1;
+                state_vector_[node] = 0;
+            }
         }
     }
 }
