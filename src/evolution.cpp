@@ -48,7 +48,7 @@ void update_event(StaticNetworkSIR& net, RNGType& gen)
 
 	//alias to propensity group
 	const PropensityGroup& propensity_group = net.get_propensity_group(
-		group_index); 
+		group_index);
 	double max_propensity = net.get_max_propensity(group_index);
 
 	//Determine the in_group_index

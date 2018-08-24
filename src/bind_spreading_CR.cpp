@@ -89,7 +89,8 @@ PYBIND11_MODULE(spreading_CR, m)
             )pbdoc")
         
         .def("next_state", &SpreadingProcess::next_state, R"pbdoc(
-            Makes a Monte-Carlo step--the state of the system has changed due             to a transmission, recovery or loss of immunity event.
+            Makes a Monte-Carlo step--the state of the system has changed due             
+            to a transmission, recovery or loss of immunity event.
             )pbdoc")
 
         .def("evolve", &SpreadingProcess::evolve, R"pbdoc(
