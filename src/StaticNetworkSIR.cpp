@@ -62,6 +62,7 @@ StaticNetworkSIR::StaticNetworkSIR(
             is_SIR_ = true;
         }
     }
+
     //Determine minimal and maximal degree
     size_t degree_min = degree(0);
     size_t degree_max = degree(0);

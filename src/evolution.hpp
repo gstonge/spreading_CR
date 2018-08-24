@@ -24,6 +24,7 @@ constexpr const uint32_t TABLE_SIZE = 100000;
 uint32_t INDEX_MAP(uint32_t NUM);
 
 
+
 void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen,
         std::uniform_real_distribution<double>& random_01);
 

@@ -18,7 +18,7 @@ namespace net
 uint32_t INDEX_MAP(uint32_t NUM)
 {
     return ((NUM == 4294967296) ? (TABLE_SIZE-1) :
-            uint32_t(TABLE_SIZE*double(NUM)/4294967296));
+            static_cast<uint32_t>(TABLE_SIZE*double(NUM)/4294967296));
 }
 
 /**
