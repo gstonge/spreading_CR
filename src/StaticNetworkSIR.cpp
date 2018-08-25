@@ -32,12 +32,12 @@ namespace net
 StaticNetworkSIR::StaticNetworkSIR(
     vector<pair<NodeLabel, NodeLabel> >& edge_list,
     double transmission_rate, double recovery_rate,
-    double waning_immunity_rate) : 	Network(edge_list),
+    double waning_immunity_rate, double base) :	Network(edge_list),
     state_vector_(Network::size(),0), Inode_number_(0), Rnode_number_(0),
     transmission_rate_(transmission_rate), recovery_rate_(recovery_rate),
     waning_immunity_rate_(waning_immunity_rate), event_tree_(), hash_(1.,1.),
     max_propensity_vector_(), propensity_group_map_(), mapping_vector_(),
-    is_SI_(false), is_SIS_(false), is_SIRS_(false), is_SIR_(true)
+    is_SI_(false), is_SIS_(false), is_SIRS_(false), is_SIR_(true), base_(base)
 {
     //Identify the model
     if(recovery_rate_ == 0)
@@ -95,10 +95,11 @@ StaticNetworkSIR::StaticNetworkSIR(
         propensity_min = min(transmission_rate_*degree_min + recovery_rate_,
             waning_immunity_rate_);
     }
-    size_t number_of_group = max(ceil(log2(propensity_max/propensity_min)),1.);
+    size_t number_of_group = max(ceil(log2(propensity_max/propensity_min)/
+                log2(base_)),1.);
 
     //Initialize correct hash object, binary tree
-    hash_ = HashPropensity(propensity_min, propensity_max);
+    hash_ = HashPropensity(propensity_min, propensity_max, base_);
     event_tree_ = BinaryTree(number_of_group);
 
     //reserve size for each propensity group
@@ -110,12 +111,12 @@ StaticNetworkSIR::StaticNetworkSIR(
     }
 
     //Initalize max propensity vector for each group
-    max_propensity_vector_.push_back(2*propensity_min);
+    max_propensity_vector_.push_back(base_*propensity_min);
     for (size_t group_index = 0; group_index < number_of_group-1;
         ++group_index)
     {
         max_propensity_vector_.push_back(
-            2*max_propensity_vector_[group_index]);
+            base_*max_propensity_vector_[group_index]);
     }
     max_propensity_vector_.pop_back();
     max_propensity_vector_.push_back(propensity_max);

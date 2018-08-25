@@ -30,10 +30,10 @@ namespace net
 SpreadingProcess::SpreadingProcess(
     vector<pair<NodeLabel, NodeLabel> >& edge_list,
     double transmission_rate, double recovery_rate,
-    double waning_immunity_rate) : network_(edge_list, transmission_rate,
-            recovery_rate, waning_immunity_rate), time_vector_(),
-        Inode_number_vector_(), Rnode_number_vector_(), gen_(42),
-        random_01_(0.,1.)
+    double waning_immunity_rate, double base) : network_(edge_list,
+        transmission_rate, recovery_rate, waning_immunity_rate, base),
+        time_vector_(), Inode_number_vector_(), Rnode_number_vector_(),
+        gen_(42), random_01_(0.,1.)
 {
     // construct the log table
     for (int i = 0; i < TABLE_SIZE; i++)

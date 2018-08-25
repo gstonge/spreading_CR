@@ -24,7 +24,7 @@ class HashPropensity
 {
 public:
     //Constructor
-    HashPropensity(double propensity_min, double propensity_max);
+    HashPropensity(double propensity_min, double propensity_max, double base_ = 2);
 
     //Call operator definition
     std::size_t operator()(double propensity) const;
@@ -33,7 +33,8 @@ private:
     //Members
     double propensity_min_;
     double propensity_max_;
-    bool power_of_two_;
+    double base_;
+    bool power_of_base_;
 };
 
 }//end of namespace net

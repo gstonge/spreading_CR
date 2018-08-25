@@ -58,50 +58,41 @@ void update_event(StaticNetworkSIR& net, RNGType& gen,
 	double max_propensity = net.get_max_propensity(group_index);
 
 	//Determine the in_group_index
-	// uniform_int_distribution<int> random_index(0,propensity_group.size()-1);
 	size_t in_group_index;
 	double propensity;
 	bool chosen = false;
 
-    //double r1,r2,r3,r4;
-    double r1;
+    double r;
 	while (not chosen)
 	{
-		r1 = random_01(gen);
-		in_group_index = floor(r1*propensity_group.size());
-		//recycling r1
-		//r2 = r1*propensity_group.size()-in_group_index;
-        r1 = random_01(gen);
+		r = random_01(gen);
+		in_group_index = floor(r*propensity_group.size());
+        r = random_01(gen);
 		propensity = propensity_group[in_group_index].second;
-		if (r1 < propensity/max_propensity)
+		if (r < propensity/max_propensity)
 		{
 			chosen = true;
-            //r3 = r2*max_propensity/propensity;
-
 		}
 	}
 
 
+	r = random_01(gen);
 	//Determine which type of event
 	NodeLabel node = propensity_group[in_group_index].first;
     if (net.is_infected(node))
 	{
 		//the node is infected - infection or recovery
-	    r1 = random_01(gen);
-		if (r1 < net.get_recovery_rate()/propensity)
+		if (r < net.get_recovery_rate()/propensity)
 		{
 			//recovery
 			net.recovery(group_index, in_group_index);
 		}
 		else
 		{
-			//recycling r1
-			//double r4 = (propensity*r3-net.get_recovery_rate())/(propensity
-		    //	-net.get_recovery_rate());
-            r1 = random_01(gen);
+            r = random_01(gen);
 			//infection attempt of a neighbor
 			const vector<NodeLabel>& neighbor_vector = net.get_neighbor_vector(node);
-			NodeLabel neighbor_node = neighbor_vector[floor(r1*
+			NodeLabel neighbor_node = neighbor_vector[floor(r*
 				neighbor_vector.size())];
 			if (net.is_susceptible(neighbor_node))
 			{

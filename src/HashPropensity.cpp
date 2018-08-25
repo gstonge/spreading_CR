@@ -20,15 +20,16 @@ namespace net
  *      Constructor
  *---------------------------*/
 
-HashPropensity::HashPropensity(double propensity_min, double propensity_max) :
+HashPropensity::HashPropensity(double propensity_min, double propensity_max,
+        double base) :
     propensity_min_(propensity_min), propensity_max_(propensity_max),
-    power_of_two_(false)
+    power_of_base_(false), base_(base)
 {
-    if (floor(log2(propensity_max/propensity_min)) ==
-        ceil(log2(propensity_max/propensity_min)) and
+    if (floor(log2(propensity_max/propensity_min)/log2(base_)) ==
+        ceil(log2(propensity_max/propensity_min)/log2(base_)) and
         propensity_max != propensity_min)
     {
-        power_of_two_ = true;
+        power_of_base_ = true;
     }
 }
 
@@ -38,9 +39,8 @@ HashPropensity::HashPropensity(double propensity_min, double propensity_max) :
 
 size_t HashPropensity::operator()(double propensity) const
 {
-    size_t index = floor(log2(propensity/propensity_min_));
-
-    if (power_of_two_ and propensity == propensity_max_)
+    size_t index = floor(log2(propensity/propensity_min_)/log2(base_));
+    if (power_of_base_ and propensity == propensity_max_)
     {
         index -=1 ;
     }

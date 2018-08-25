@@ -27,7 +27,8 @@ public:
         std::vector<std::pair<NodeLabel, NodeLabel> >& edge_list,
         double transmission_rate,
     	double recovery_rate,
-        double waning_immunity_rate);
+        double waning_immunity_rate,
+        double base = 2);
 
     //Accessors
     std::vector<double> get_time_vector() const

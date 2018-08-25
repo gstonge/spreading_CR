@@ -16,30 +16,39 @@ def main(arguments):
     #create a random graph using networkx
     seed = 42
     N = 10000
-    p = 10**(-3)
-    G = nx.fast_gnp_random_graph(N,p, args.seed)
+    #p = 10**(-3)
+    m = 5
+    #G = nx.fast_gnp_random_graph(N,p, args.seed)
+    G = nx.barabasi_albert_graph(N,m,args.seed)
 
     #propagation parameters
-    base = 2.8
     transmission_rate = 0.15
     recovery_rate = 1              #rate at which infected nodes become recovered
     waning_immunity_rate = 0  #rate at which recovered nodes become
     infected_fraction = 0.05       #Initial infected fraction - at random
-    sample_size = 1000
+    sample_size = 10000
 
-    #initialize the propagation process
-    sp = SpreadingProcess(list(G.edges()), transmission_rate, recovery_rate,
-                      waning_immunity_rate, base)
+    base_list = np.linspace(1.3, 4, 20)
+    time_list = []
 
-    start = time.time()
-    for i in range(sample_size):
-        #simulate until an absorbing state is reached
-        sp.initialize(infected_fraction, i)
-        sp.evolve(np.inf)
-        sp.reset()
-    end = time.time()
+    for base in base_list:
 
-    print((end-start)/sample_size)
+        #initialize the propagation process
+        sp = SpreadingProcess(list(G.edges()), transmission_rate, recovery_rate,
+                          waning_immunity_rate, base)
+
+        start = time.time()
+        for i in range(sample_size):
+            #simulate until an absorbing state is reached
+            sp.initialize(infected_fraction, i)
+            sp.evolve(np.inf)
+            sp.reset()
+        end = time.time()
+        time_list.append((end-start)/sample_size)
+
+    for base, t in zip(base_list,time_list):
+        print("{} {}".format(base,t))
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
