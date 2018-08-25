@@ -165,28 +165,32 @@ void StaticNetworkSIR::get_configuration_copy(
 void StaticNetworkSIR::reset()
 {
     //clean the event tree and propensity groups
-    for (auto iter = propensity_group_map_.begin();
-        iter != propensity_group_map_.end(); iter ++)
+    if (event_tree_.get_value() > 0)
     {
-        GroupIndex group_index = iter->first;
-        while (not (iter->second).empty()) //assumes S nodes are not in groups
+        for (auto iter = propensity_group_map_.begin();
+            iter != propensity_group_map_.end(); iter ++)
         {
-            size_t in_group_index = (iter->second).size()-1;
-            if (is_infected(propensity_group_map_[group_index]
-                [in_group_index].first))
+            GroupIndex group_index = iter->first;
+            while (not (iter->second).empty()) //assumes S nodes are not in groups
             {
-                recovery(group_index, in_group_index);
-            }
-            else if (is_recovered(propensity_group_map_[group_index]
-                [in_group_index].first))
-            {
-                immunity_loss(group_index, in_group_index);
+                size_t in_group_index = (iter->second).size()-1;
+                if (is_infected(propensity_group_map_[group_index]
+                    [in_group_index].first))
+                {
+                    recovery(group_index, in_group_index);
+                }
+                else
+                {
+                    immunity_loss(group_index, in_group_index);
+                }
             }
         }
     }
+
     if(is_SIR_)
     {
-        //for SIR model, one needs to set manually recovered nodes to susceptible
+        //for SIR model, one needs to set manually recovered nodes to
+        //susceptible
         for (NodeLabel node = 0; node < size(); node++)
         {
             if (is_recovered(node))
