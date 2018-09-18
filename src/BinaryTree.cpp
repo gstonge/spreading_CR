@@ -70,10 +70,11 @@ BinaryTree::BinaryTree(const BinaryTree& tree) :
 
     //Give the same values to the leaves
     LeafIndex leaf_index = 0;
-    for (auto iter = tree.leaves_vector_.begin(); 
-        iter < tree.leaves_vector_.end(); ++iter)
+    for (auto iter = tree.leaves_vector_.begin();
+        iter != tree.leaves_vector_.end(); ++iter)
     {
         update_value(leaf_index, (*iter)->value);
+        leaf_index += 1;
     }
 }
 
@@ -101,10 +102,11 @@ BinaryTree& BinaryTree::operator=(const BinaryTree& tree)
 
     //Give the same values to the leaves
     LeafIndex leaf_index = 0;
-    for (auto iter = tree.leaves_vector_.begin(); 
-        iter < tree.leaves_vector_.end(); ++iter)
+    for (auto iter = tree.leaves_vector_.begin();
+        iter != tree.leaves_vector_.end(); ++iter)
     {
         update_value(leaf_index, (*iter)->value);
+        leaf_index += 1;
     }
 
     return *this;
