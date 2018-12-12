@@ -20,7 +20,7 @@ namespace net
 {//start of namespace net
 
 //Define new types
-typedef unsigned int StateLabel; 
+typedef unsigned int StateLabel;
 typedef std::vector<std::pair<NodeLabel,double> > PropensityGroup;
 typedef size_t GroupIndex;
 
@@ -28,10 +28,11 @@ typedef size_t GroupIndex;
 struct Configuration
 {
     std::vector<StateLabel> state_vector;
+    std::vector<NodeLabel> inert_node_vector;
     BinaryTree event_tree;
     std::unordered_map<GroupIndex,PropensityGroup> propensity_group_map;
     std::size_t Inode_number;
-    std::size_t Rnode_number;    
+    std::size_t Rnode_number;
 };
 
 /**
@@ -45,7 +46,7 @@ public:
     //Constructor
     StaticNetworkSIR(std::vector<std::pair<NodeLabel, NodeLabel> >& edge_list,
         double transmission_rate, double recovery_rate,
-        double waning_immunity_rate);
+        double waning_immunity_rate, double base = 2);
 
     //Accessors
     const bool is_susceptible(NodeLabel node)
@@ -61,18 +62,16 @@ public:
         {return recovery_rate_;}
     double get_waning_immunity_rate() const
         {return waning_immunity_rate_;}
-    double prevalence() const 
+    double prevalence() const
         {return ((1.*Inode_number_)/Network::size());}
     double incidence() const
         {return ((1.*Rnode_number_)/Network::size());}
-    std::size_t get_Inode_number() const 
+    std::size_t get_Inode_number() const
         {return Inode_number_;}
-    std::size_t get_Rnode_number() const 
+    std::size_t get_Rnode_number() const
         {return Rnode_number_;}
     BinaryTree& get_event_tree()
         {return event_tree_;}
-    GroupIndex get_group_index(double propensity) const
-        {return hash_(propensity);}
     const PropensityGroup& get_propensity_group(GroupIndex group_index) const
         {return propensity_group_map_.at(group_index);}
     void get_configuration_copy(Configuration& empty_configuration) const;
@@ -91,10 +90,17 @@ private:
     double transmission_rate_;
     double recovery_rate_;
     double waning_immunity_rate_;
+    double base_;
+    bool is_SI_;
+    bool is_SIS_;
+    bool is_SIRS_;
+    bool is_SIR_;
     HashPropensity hash_;
     std::vector<double> max_propensity_vector_; //max propensity for each group
+    std::vector<GroupIndex> mapping_vector_;
     //Varying members
     std::vector<StateLabel> state_vector_;
+    std::vector<NodeLabel> inert_node_vector_;
     BinaryTree event_tree_;
     std::unordered_map<GroupIndex,PropensityGroup> propensity_group_map_;
     std::size_t Inode_number_;

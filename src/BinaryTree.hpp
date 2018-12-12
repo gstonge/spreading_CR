@@ -1,10 +1,26 @@
-/**
-* \file BinaryTree.hpp
-* \brief Header file for class BinaryTree
-* \author Guillaume St-Onge
-* \version 1.0
-* \date 27/01/2018
-*/
+/*
+ * MIT License
+ *
+ * Copyright (c) 2018 Guillaume St-Onge
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #ifndef BINARYTREE_HPP
 #define BINARYTREE_HPP
@@ -30,11 +46,7 @@ struct BinaryTreeNode
     BinaryTreeNode* child_right;
 };
 
-/**
-* \class BinaryTree BinaryTree.hpp
-* \brief Binary tree implementation where each node possess a value equal
-* to the sum of the value of its children.
-*/
+//Binary tree to udpate dynamically a cumulative distribution
 class BinaryTree
 {
 public:
@@ -53,7 +65,7 @@ public:
     bool is_root()
         {return current_node_->parent == nullptr;}
     bool is_leaf()
-        {return current_node_->child_left == nullptr and 
+        {return current_node_->child_left == nullptr and
             current_node_->child_right == nullptr ;}
     double get_value() const
         {return current_node_->value;}
@@ -86,7 +98,7 @@ private:
     std::unordered_map<BinaryTreeNode*,LeafIndex> leaves_index_map_;
 
     //To be called by constructors and assignement operator
-    BinaryTreeNode* branch(BinaryTreeNode* parent, int node_index, 
+    BinaryTreeNode* branch(BinaryTreeNode* parent, int node_index,
     int n_nodes);
 
     //to be called by destructor
