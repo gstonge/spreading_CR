@@ -37,6 +37,10 @@ public:
     	{return Inode_number_vector_;}
     std::vector<unsigned int> get_Rnode_number_vector() const
     	{return Rnode_number_vector_;}
+    size_t get_Rnode_number() const
+        {return network_.get_Rnode_number();}
+    size_t get_size() const
+        {return network_.size();}
     bool is_absorbed();
 
     //Mutators
