@@ -139,7 +139,7 @@ plt.ylabel(r'Mean final size')
 plt.show()
 ```
 
-### Phase transition : SIR model
+### Get recovered nodes set : SIR model
 
 In this example, we consider the SIR model on the Watts-Strogatz random graph. A certain specified list of nodes are initially infected. We illustrate the set of recovered nodes at the end of the process.
 ```python
