@@ -13,6 +13,7 @@
 #include <BinaryTree.hpp>
 #include <HashPropensity.hpp>
 #include <unordered_map>
+#include <unordered_set>
 #include <cmath>
 #include <memory>
 
@@ -28,6 +29,7 @@ typedef size_t GroupIndex;
 struct Configuration
 {
     std::vector<StateLabel> state_vector;
+    std::vector<std::unordered_set<NodeLabel>> state_set_vector;
     std::vector<NodeLabel> inert_node_vector;
     BinaryTree event_tree;
     std::unordered_map<GroupIndex,PropensityGroup> propensity_group_map;
@@ -55,6 +57,12 @@ public:
         {return state_vector_[node] == 1;}
     const bool is_recovered(NodeLabel node)
         {return state_vector_[node] == 2;}
+    const std::unordered_set<NodeLabel>& get_Snode_set() const
+        {return state_set_vector_.at(0);}
+    const std::unordered_set<NodeLabel>& get_Inode_set() const
+        {return state_set_vector_.at(1);}
+    const std::unordered_set<NodeLabel>& get_Rnode_set() const
+        {return state_set_vector_.at(2);}
 
     double get_transmission_rate() const
         {return transmission_rate_;}
@@ -100,6 +108,7 @@ private:
     std::vector<GroupIndex> mapping_vector_;
     //Varying members
     std::vector<StateLabel> state_vector_;
+    std::vector<std::unordered_set<NodeLabel>> state_set_vector_;
     std::vector<NodeLabel> inert_node_vector_;
     BinaryTree event_tree_;
     std::unordered_map<GroupIndex,PropensityGroup> propensity_group_map_;

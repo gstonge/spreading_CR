@@ -43,6 +43,13 @@ public:
         {return network_.size();}
     bool is_absorbed();
 
+    const std::unordered_set<NodeLabel>& get_Snode_set() const
+        {return network_.get_Snode_set();}
+    const std::unordered_set<NodeLabel>& get_Inode_set() const
+        {return network_.get_Inode_set();}
+    const std::unordered_set<NodeLabel>& get_Rnode_set() const
+        {return network_.get_Rnode_set();}
+
     //Mutators
     void initialize(double fraction, unsigned int seed);
     void initialize(std::vector<NodeLabel>& Inode_vector,

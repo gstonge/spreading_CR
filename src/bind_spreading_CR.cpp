@@ -65,6 +65,18 @@ PYBIND11_MODULE(spreading_CR, m)
             Returns true if the system has reached an absorbing state.
             )pbdoc")
 
+        .def("get_Snode_set", &SpreadingProcess::get_Snode_set, R"pbdoc(
+            Returns the current set of susceptible nodes.
+            )pbdoc")
+
+        .def("get_Inode_set", &SpreadingProcess::get_Inode_set, R"pbdoc(
+            Returns the current set of infected nodes.
+            )pbdoc")
+
+        .def("get_Rnode_set", &SpreadingProcess::get_Rnode_set, R"pbdoc(
+            Returns the current set of recovered nodes.
+            )pbdoc")
+
         .def("initialize", (void (SpreadingProcess::*)(double, unsigned int))
             &SpreadingProcess::initialize, R"pbdoc(
             Initialize the spreading process.
