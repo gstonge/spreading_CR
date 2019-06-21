@@ -38,8 +38,14 @@ StaticNetworkSIR::StaticNetworkSIR(
     waning_immunity_rate_(waning_immunity_rate), event_tree_(), hash_(1.,1.),
     max_propensity_vector_(), propensity_group_map_(), mapping_vector_(),
     is_SI_(false), is_SIS_(false), is_SIRS_(false), is_SIR_(true), base_(base),
-    inert_node_vector_()
+    inert_node_vector_(), state_set_vector_(3,unordered_set<NodeLabel>())
 {
+    //All nodes are susceptible initially
+    for (NodeLabel node = 0; node < size(); node++)
+    {
+        state_set_vector_[0].insert(node);
+    }
+
     //Identify the model
     if(recovery_rate_ == 0)
     {
@@ -150,6 +156,7 @@ void StaticNetworkSIR::get_configuration_copy(
     Configuration& empty_configuration) const
 {
     empty_configuration.state_vector = state_vector_;
+    empty_configuration.state_set_vector = state_set_vector_;
     empty_configuration.inert_node_vector = inert_node_vector_;
     empty_configuration.event_tree = event_tree_;
     empty_configuration.propensity_group_map = propensity_group_map_;
@@ -197,6 +204,8 @@ void StaticNetworkSIR::reset()
         {
             Rnode_number_ -= 1;
             state_vector_[inert_node_vector_.back()] = 0;
+            state_set_vector_[2].erase(inert_node_vector_.back());
+            state_set_vector_[0].insert(inert_node_vector_.back());
             inert_node_vector_.pop_back();
         }
     }
@@ -215,6 +224,8 @@ void StaticNetworkSIR::infection(NodeLabel node)
         pair<NodeLabel,double>(node,propensity));
     event_tree_.update_value(group_index, propensity);
     Inode_number_ += 1;
+    state_set_vector_[0].erase(node);
+    state_set_vector_[1].insert(node);
 }
 
 /**
@@ -232,14 +243,17 @@ void StaticNetworkSIR::recovery(GroupIndex group_index,
     swap(propensity_group[in_group_index], propensity_group.back());
     propensity_group.pop_back();
     event_tree_.update_value(group_index, -propensity);
+    state_set_vector_[1].erase(node);
     if (is_SIS_)
     {
         //node gets susceptible instantly, no new propensity
         state_vector_[node] = 0;
+        state_set_vector_[0].insert(node);
     }
     else
     {
         state_vector_[node] = 2;
+        state_set_vector_[2].insert(node);
         Rnode_number_ += 1;
         if (is_SIRS_)
         {
@@ -270,6 +284,8 @@ void StaticNetworkSIR::immunity_loss(GroupIndex group_index,
     propensity_group.pop_back();
     event_tree_.update_value(group_index, -waning_immunity_rate_);
     Rnode_number_ -= 1;
+    state_set_vector_[2].erase(node);
+    state_set_vector_[0].insert(node);
 }
 
 /**
@@ -279,6 +295,7 @@ void StaticNetworkSIR::immunity_loss(GroupIndex group_index,
 void StaticNetworkSIR::set_configuration(Configuration& configuration)
 {
     state_vector_ = configuration.state_vector;
+    state_set_vector_ = configuration.state_set_vector;
     inert_node_vector_ = configuration.inert_node_vector;
     event_tree_ = configuration.event_tree;
     propensity_group_map_ = configuration.propensity_group_map;

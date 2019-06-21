@@ -58,7 +58,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='spreading_CR',
-    version='0.1',
+    version='0.2',
     author='Guillaume St-Onge',
     description="""Simulation module for spreading processes on networks 
     using pybind11 and CMake""",

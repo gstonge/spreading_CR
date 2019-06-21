@@ -138,3 +138,42 @@ plt.xlabel(r'Transmission rate')
 plt.ylabel(r'Mean final size')
 plt.show()
 ```
+
+### Phase transition : SIR model
+
+In this example, we consider the SIR model on the Watts-Strogatz random graph. A certain specified list of nodes are initially infected. We illustrate the set of recovered nodes at the end of the process.
+```python
+from spreading_CR import SpreadingProcess
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+
+#create a random graph using networkx
+seed = 42
+N = 50
+k = 10
+p = 0.05
+G = nx.watts_strogatz_graph(N, k, p, seed=seed)
+
+#propagation parameters
+transmission_rate = 0.2
+recovery_rate = 1
+waning_immunity_rate = 0
+Inode_list = np.arange(0,2) #Initially infected nodes
+
+#initialize spreading process and evolve until an frozen state is reached
+sp = SpreadingProcess(list(G.edges()),transmission_rate, 
+                            recovery_rate,waning_immunity_rate)
+sp.initialize(Inode_list, seed)
+sp.evolve(np.inf)
+
+#get the recovered nodes
+recovered_node_set = sp.get_Rnode_set()
+
+#show the recovered nodes in orange
+node_color = ["#EDEDED" if n not in recovered_node_set else "#f19143" for n in G]
+pos = nx.spectral_layout(G)
+pos = nx.spring_layout(G,pos=pos)
+nx.draw_networkx_nodes(G,pos=pos,node_color=node_color,edgecolors='k')
+nx.draw_networkx_edges(G,pos=pos)
+```
