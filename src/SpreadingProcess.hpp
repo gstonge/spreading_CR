@@ -51,9 +51,12 @@ public:
         {return network_.get_Rnode_set();}
 
     //Mutators
-    void initialize(double fraction, unsigned int seed);
+    void initialize_random(double fraction, unsigned int seed);
     void initialize(std::vector<NodeLabel>& Inode_vector,
-	unsigned int seed);
+            unsigned int seed);
+    void initialize(std::vector<NodeLabel>& Inode_vector,
+            std::vector<NodeLabel>& Rnode_vector,
+            unsigned int seed);
     void reset();
     void next_state();
     void evolve(double time_variation);

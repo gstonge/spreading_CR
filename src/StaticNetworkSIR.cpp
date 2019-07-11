@@ -37,7 +37,7 @@ StaticNetworkSIR::StaticNetworkSIR(
     transmission_rate_(transmission_rate), recovery_rate_(recovery_rate),
     waning_immunity_rate_(waning_immunity_rate), event_tree_(), hash_(1.,1.),
     max_propensity_vector_(), propensity_group_map_(), mapping_vector_(),
-    is_SI_(false), is_SIS_(false), is_SIRS_(false), is_SIR_(true), base_(base),
+    is_SI_(false), is_SIS_(false), is_SIRS_(false), is_SIR_(false), base_(base),
     inert_node_vector_(), state_set_vector_(3,unordered_set<NodeLabel>())
 {
     //All nodes are susceptible initially
@@ -226,6 +226,35 @@ void StaticNetworkSIR::infection(NodeLabel node)
     Inode_number_ += 1;
     state_set_vector_[0].erase(node);
     state_set_vector_[1].insert(node);
+}
+
+/**
+* \brief Change the state of a node from susceptible to recovered
+* \param[in] NodeLabel node label
+*/
+void StaticNetworkSIR::set_recovered(NodeLabel node)
+{
+    if (is_SIR_ or is_SIRS_)
+    {
+        state_vector_[node] = 2;
+        state_set_vector_[2].insert(node);
+        Rnode_number_ += 1;
+        if (is_SIRS_)
+        {
+            //node can become again susceptible
+            propensity_group_map_[mapping_vector_[0]].push_back(
+                pair<NodeLabel,double>(node, waning_immunity_rate_));
+            event_tree_.update_value(mapping_vector_[0], waning_immunity_rate_);
+        }
+        else
+        {
+            inert_node_vector_.push_back(node);
+        }
+    }
+    else
+    {
+        cout << "The model does not allow recovered nodes" << endl;
+    }
 }
 
 /**
