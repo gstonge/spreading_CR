@@ -77,9 +77,8 @@ PYBIND11_MODULE(spreading_CR, m)
             Returns the current set of recovered nodes.
             )pbdoc")
 
-        .def("initialize", (void (SpreadingProcess::*)(double, unsigned int))
-            &SpreadingProcess::initialize, R"pbdoc(
-            Initialize the spreading process.
+        .def("initialize_random", &SpreadingProcess::initialize_random, R"pbdoc(
+            Initialize the spreading process with randomly infected nodes.
 
             Args:
                fraction: Initial fraction of infected nodes.
@@ -96,6 +95,18 @@ PYBIND11_MODULE(spreading_CR, m)
 
                seed: Integer seed for the random number generator.
             )pbdoc", py::arg("Inode_vector"), py::arg("seed"))
+
+        .def("initialize", (void (SpreadingProcess::*)(vector<NodeLabel>&,
+            vector<NodeLabel>&,unsigned int)) &SpreadingProcess::initialize, R"pbdoc(
+            Initialize the spreading process.
+
+            Args:
+               Inode_vector: List of nodes to be infected initially.
+               Rnode_vector: List of nodes to be recovered initially.
+
+               seed: Integer seed for the random number generator.
+            )pbdoc", py::arg("Inode_vector"), py::arg("Rnode_vector"),
+                py::arg("seed"))
 
         .def("reset", &SpreadingProcess::reset, R"pbdoc(
             Reset the spreading process. It needs to be initialized again.

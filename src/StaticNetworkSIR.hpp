@@ -91,6 +91,7 @@ public:
     void infection(NodeLabel node);
     void recovery(GroupIndex group_index, size_t in_group_index);
     void immunity_loss(GroupIndex group_index, size_t in_group_index);
+    void set_recovered(NodeLabel node);
     void set_configuration(Configuration& configuration);
 
 private:

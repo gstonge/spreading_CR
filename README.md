@@ -59,7 +59,7 @@ infected_fraction = 0.05       #Initial infected fraction - at random
 #initialize the propagation process
 sp = SpreadingProcess(list(G.edges()), transmission_rate, recovery_rate, 
     waning_immunity_rate)
-sp.initialize(infected_fraction, seed)
+sp.initialize_random(infected_fraction, seed)
 
 #simulate the process
 t = 20
@@ -162,9 +162,48 @@ waning_immunity_rate = 0
 Inode_list = np.arange(0,2) #Initially infected nodes
 
 #initialize spreading process and evolve until an frozen state is reached
-sp = SpreadingProcess(list(G.edges()),transmission_rate, 
+sp = SpreadingProcess(list(G.edges()),transmission_rate,
                             recovery_rate,waning_immunity_rate)
 sp.initialize(Inode_list, seed)
+sp.evolve(np.inf)
+
+#get the recovered nodes
+recovered_node_set = sp.get_Rnode_set()
+
+#show the recovered nodes in orange
+node_color = ["#EDEDED" if n not in recovered_node_set else "#f19143" for n in G]
+pos = nx.spectral_layout(G)
+pos = nx.spring_layout(G,pos=pos)
+nx.draw_networkx_nodes(G,pos=pos,node_color=node_color,edgecolors='k')
+nx.draw_networkx_edges(G,pos=pos)
+```
+
+# Initialize the network with recovered (immuned) nodes
+
+In this example, we consider the SIR model on a chain. Node number 5 is immuned
+and node 0 is initially infected. We illustrate the set of recovered nodes at the end of the process.
+```python
+from spreading_CR import SpreadingProcess
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+
+#create a chain graph using networkx
+seed = 42
+G = nx.Graph()
+G.add_edges_from([(i,i+1) for i in range(10)])
+
+#propagation parameters
+transmission_rate = 1000.
+recovery_rate = 1
+waning_immunity_rate = 0
+Inode_list = np.arange(0,1) #Initially infected nodes
+Rnode_list = [5]
+
+#initialize spreading process and evolve until an frozen state is reached
+sp = SpreadingProcess(list(G.edges()),transmission_rate, 
+                            recovery_rate,waning_immunity_rate)
+sp.initialize(Inode_list, Rnode_list, seed)
 sp.evolve(np.inf)
 
 #get the recovered nodes

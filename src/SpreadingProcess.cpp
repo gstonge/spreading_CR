@@ -72,7 +72,7 @@ bool SpreadingProcess::is_absorbed()
 * \brief Initialize the state of the system with randomly selected nodes
 * \param[in] Inode_vector vector of NodeLabel for each initially infected node
 */
-void SpreadingProcess::initialize(double fraction, unsigned int seed)
+void SpreadingProcess::initialize_random(double fraction, unsigned int seed)
 {
     gen_.seed(seed);
     infect_fraction(network_, fraction, gen_, random_01_);
@@ -86,11 +86,34 @@ void SpreadingProcess::initialize(double fraction, unsigned int seed)
 * \param[in] Inode_vector vector of NodeLabel for each initially infected node
 */
 void SpreadingProcess::initialize(vector<NodeLabel>& Inode_vector,
-    unsigned int seed)
+        unsigned int seed)
 {
     for (int i=0; i<Inode_vector.size(); i++)
     {
     	network_.infection(Inode_vector[i]);
+    }
+    gen_.seed(seed);
+    time_vector_.push_back(0);
+    Inode_number_vector_.push_back(network_.get_Inode_number());
+    Rnode_number_vector_.push_back(network_.get_Rnode_number());
+}
+
+/**
+* \brief Initialize the state of the system with specified infected and
+* recovered nodes
+* \param[in] Inode_vector vector of NodeLabel for each initially infected node
+* \param[in] Rnode_vector vector of NodeLabel for each initially recovered node
+*/
+void SpreadingProcess::initialize(vector<NodeLabel>& Inode_vector,
+        std::vector<NodeLabel>& Rnode_vector, unsigned int seed)
+{
+    for (int i=0; i<Inode_vector.size(); i++)
+    {
+    	network_.infection(Inode_vector[i]);
+    }
+    for (int i=0; i<Rnode_vector.size(); i++)
+    {
+    	network_.set_recovered(Rnode_vector[i]);
     }
     gen_.seed(seed);
     time_vector_.push_back(0);
