@@ -178,7 +178,7 @@ nx.draw_networkx_nodes(G,pos=pos,node_color=node_color,edgecolors='k')
 nx.draw_networkx_edges(G,pos=pos)
 ```
 
-# Initialize the network with recovered (immuned) nodes
+### Initialize the network with recovered (immuned) nodes
 
 In this example, we consider the SIR model on a chain. Node number 5 is immuned
 and node 0 is initially infected. We illustrate the set of recovered nodes at the end of the process.
