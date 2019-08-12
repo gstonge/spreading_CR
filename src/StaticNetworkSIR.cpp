@@ -55,7 +55,7 @@ StaticNetworkSIR::StaticNetworkSIR(
     {
         if (waning_immunity_rate_ > 0)
         {
-            if (isinf(waning_immunity_rate_))
+            if (std::isinf(waning_immunity_rate_))
             {
                 is_SIS_ = true;
             }
@@ -253,7 +253,7 @@ void StaticNetworkSIR::set_recovered(NodeLabel node)
     }
     else
     {
-        cout << "The model does not allow recovered nodes" << endl;
+        cout << "This model version does not allow recovered nodes" << endl;
     }
 }
 
