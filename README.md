@@ -182,6 +182,10 @@ nx.draw_networkx_edges(G,pos=pos)
 
 In this example, we consider the SIR model on a chain. Node number 5 is immuned
 and node 0 is initially infected. We illustrate the set of recovered nodes at the end of the process.
+
+***Note :*** this immunization method is more efficient for sampling than directly changing
+the structure (removing edges connected to an immuned node). Indeed, one can
+keep the same object `SpreadingProcess` all along.
 ```python
 from spreading_CR import SpreadingProcess
 import numpy as np
