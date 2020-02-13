@@ -253,13 +253,15 @@ sample = 10000 #number of sample for R0
 R0_mean_list = []
 R0_std_list = []
 
+i = 0
 for transmission_rate in transmission_rate_list:
     #initialize the propagation process
     sp = SpreadingProcess(list(G.edges()), transmission_rate,
                             recovery_rate, waning_immunity_rate)
-    R0_mean,R0_std = sp.estimate_R0(sample,seed)
+    R0_mean,R0_std = sp.estimate_R0(sample,seed+i)
     R0_mean_list.append(R0_mean)
     R0_std_list.append(R0_std/np.sqrt(sample)) #standard error
+    i+=1
 
 #draw R0 for different parameters
 plt.errorbar(transmission_rate_list, R0_mean_list,
