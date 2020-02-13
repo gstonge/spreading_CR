@@ -47,7 +47,8 @@ void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen,
  * \param[in] gen a reference to a random number generator
  */
 void update_event(StaticNetworkSIR& net, RNGType& gen,
-        uniform_real_distribution<double>& random_01)
+        uniform_real_distribution<double>& random_01,
+        vector<pair<NodeLabel,NodeLabel>>& transmission_vector, bool tracing)
 {
 	GroupIndex group_index = (net.get_event_tree()).get_leaf_index(
 		random_01(gen));
@@ -97,6 +98,10 @@ void update_event(StaticNetworkSIR& net, RNGType& gen,
 			if (net.is_susceptible(neighbor_node))
 			{
 				net.infection(neighbor_node);
+                if (tracing)
+                {
+                    transmission_vector.emplace_back(node,neighbor_node);
+                }
 			}
 		}
 	}

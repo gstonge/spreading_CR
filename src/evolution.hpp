@@ -29,7 +29,9 @@ void infect_fraction(StaticNetworkSIR& net, double fraction, RNGType& gen,
         std::uniform_real_distribution<double>& random_01);
 
 void update_event(StaticNetworkSIR& net, RNGType& gen,
-        std::uniform_real_distribution<double>& random_01);
+        std::uniform_real_distribution<double>& random_01,
+        std::vector<std::pair<NodeLabel,NodeLabel>>& transmission_vector,
+        bool tracing = false);
 
 double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
         std::uniform_real_distribution<double>& random_01);

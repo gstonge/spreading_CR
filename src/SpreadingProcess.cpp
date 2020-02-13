@@ -9,11 +9,19 @@
 #include <SpreadingProcess.hpp>
 #include <evolution.hpp>
 #include <iostream>
+#include <cmath>
+#include <exception>
 
 using namespace std;
 
 namespace net
 {//start of namespace net
+
+struct MyException : public exception {
+   const char * what () const throw () {
+      return "Transmission rate must be greater than 0";
+   }
+};
 
 
 /*---------------------------
@@ -33,7 +41,7 @@ SpreadingProcess::SpreadingProcess(
     double waning_immunity_rate, double base) : network_(edge_list,
         transmission_rate, recovery_rate, waning_immunity_rate, base),
         time_vector_(), Inode_number_vector_(), Rnode_number_vector_(),
-        gen_(42), random_01_(0.,1.)
+        gen_(42), random_01_(0.,1.), transmission_vector_(), tracing_(false)
 {
     // construct the log table
     for (int i = 0; i < TABLE_SIZE; i++)
@@ -128,8 +136,8 @@ void SpreadingProcess::reset()
 {
     Inode_number_vector_.clear();
     Rnode_number_vector_.clear();
+    transmission_vector_.clear();
     time_vector_.clear();
-    gen_.seed(42);
     network_.reset();
 }
 
@@ -145,7 +153,8 @@ void SpreadingProcess::next_state()
     	while (not new_state)
     	{
     	    dt += get_lifetime(network_, gen_, log_table_);
-    	    update_event(network_, gen_, random_01_);
+    	    update_event(network_, gen_, random_01_, transmission_vector_,
+                    tracing_);
             if (network_.get_Inode_number() != Inode_number_vector_.back())
     	    {
     	        new_state = true;
@@ -171,6 +180,68 @@ void SpreadingProcess::evolve(double time_variation)
     	current_time_variation += time_vector_.back()-
 		time_vector_[time_vector_.size()-2];
     }
+}
+
+pair<double,double> SpreadingProcess::estimate_R0(unsigned int sample,
+        unsigned int seed)
+{
+    if (network_.get_transmission_rate() <= 0)
+    {
+        throw MyException();
+    }
+    bool initial_tracing = tracing_;
+    set_tracing(true);
+    gen_.seed(seed);
+    vector<unsigned int> secondary_case_vector(sample,0);
+    double R0_mean = 0.;
+    double R0_std = 0.;
+    NodeLabel source_node, secondary_node;
+    unsigned int i = 0;
+    while (i < sample)
+    {
+        reset();
+        //infect a random node
+		source_node = floor(random_01_(gen_)*network_.size());
+        network_.infection(source_node);
+        time_vector_.push_back(0);
+        Inode_number_vector_.push_back(network_.get_Inode_number());
+        Rnode_number_vector_.push_back(network_.get_Rnode_number());
+
+	    next_state();
+        //check if node did transmit or died
+        if (transmission_vector_.size() > 0)
+        {
+            secondary_node = transmission_vector_.back().second;
+            while (network_.is_infected(secondary_node))
+            {
+                next_state();
+            }
+            //count the number of appearance of secondary node
+            for (int j = 0; j < transmission_vector_.size(); j++)
+            {
+                if (transmission_vector_[j].first == secondary_node)
+                {
+                    secondary_case_vector[i] += 1;
+                    R0_mean += 1;
+                }
+            }
+            i += 1;
+        }
+    }
+    reset();
+    set_tracing(initial_tracing);
+    R0_mean /= sample;
+
+    //calculate std on R0
+    for (int j = 0; j < sample; j++)
+    {
+        R0_std += ((secondary_case_vector[j] - R0_mean)
+                *(secondary_case_vector[j] - R0_mean));
+    }
+    R0_std /= sample;
+    R0_std = sqrt(R0_std);
+
+    return make_pair(R0_mean,R0_std);
 }
 
 

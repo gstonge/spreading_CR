@@ -82,7 +82,6 @@ PYBIND11_MODULE(spreading_CR, m)
 
             Args:
                fraction: Initial fraction of infected nodes.
-
                seed: Integer seed for the random number generator.
             )pbdoc", py::arg("fraction"), py::arg("seed"))
 
@@ -92,7 +91,6 @@ PYBIND11_MODULE(spreading_CR, m)
 
             Args:
                Inode_vector: List of nodes to be infected initially.
-
                seed: Integer seed for the random number generator.
             )pbdoc", py::arg("Inode_vector"), py::arg("seed"))
 
@@ -103,7 +101,6 @@ PYBIND11_MODULE(spreading_CR, m)
             Args:
                Inode_vector: List of nodes to be infected initially.
                Rnode_vector: List of nodes to be recovered initially.
-
                seed: Integer seed for the random number generator.
             )pbdoc", py::arg("Inode_vector"), py::arg("Rnode_vector"),
                 py::arg("seed"))
@@ -122,5 +119,14 @@ PYBIND11_MODULE(spreading_CR, m)
 
             Args:
                time_variation: Time duration for the simulation.
-            )pbdoc", py::arg("time_variation"));
+            )pbdoc", py::arg("time_variation"))
+
+        .def("estimate_R0", &SpreadingProcess::estimate_R0, R"pbdoc(
+            Let the system evolve for a time duration.
+
+            Args:
+               sample: Integer for the number of samples to draw.
+               seed: Integer seed for the random number generator.
+            )pbdoc", py::arg("sample"), py::arg("seed"));
+
 }
