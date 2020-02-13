@@ -51,6 +51,8 @@ public:
         {return network_.get_Rnode_set();}
 
     //Mutators
+    void set_tracing(bool tracing)
+        {tracing_ = tracing;}
     void initialize_random(double fraction, unsigned int seed);
     void initialize(std::vector<NodeLabel>& Inode_vector,
             unsigned int seed);
@@ -60,6 +62,8 @@ public:
     void reset();
     void next_state();
     void evolve(double time_variation);
+    std::pair<double,double> estimate_R0(unsigned int sample,
+            unsigned int seed = 42);
 
 private:
     StaticNetworkSIR network_;
@@ -70,6 +74,8 @@ private:
     std::vector<double> time_vector_;
     std::vector<unsigned int> Inode_number_vector_;
     std::vector<unsigned int> Rnode_number_vector_;
+    std::vector<std::pair<NodeLabel,NodeLabel>> transmission_vector_;
+    bool tracing_;
 };
 
 

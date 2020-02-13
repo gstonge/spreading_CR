@@ -24,7 +24,7 @@ Second, use pip to install the module.
 ```bash
 pip install ./spreading_CR
 ```
-or 
+or
 ```bash
 pip install -e ./spreading_CR
 ```
@@ -36,7 +36,7 @@ The following examples make use of the networkx module (https://github.com/netwo
 
 ### Time evolution : SIS model
 
-In this example, we consider the SIS model on an Erdős–Rényi random graph. A certain fraction of the nodes are infected initially at random. We draw the evolution of the prevalence as a function of time. 
+In this example, we consider the SIS model on an Erdős–Rényi random graph. A certain fraction of the nodes are infected initially at random. We draw the evolution of the prevalence as a function of time.
 
 ```python
 from spreading_CR import SpreadingProcess
@@ -51,13 +51,13 @@ p = 10**(-3)
 G = nx.fast_gnp_random_graph(N,p, seed = seed)
 
 #propagation parameters
-transmission_rate = 0.15         
+transmission_rate = 0.15
 recovery_rate = 1              #rate at which infected nodes become recovered
 waning_immunity_rate = np.inf  #rate at which recovered nodes become susceptible
 infected_fraction = 0.05       #Initial infected fraction - at random
 
 #initialize the propagation process
-sp = SpreadingProcess(list(G.edges()), transmission_rate, recovery_rate, 
+sp = SpreadingProcess(list(G.edges()), transmission_rate, recovery_rate,
     waning_immunity_rate)
 sp.initialize_random(infected_fraction, seed)
 
@@ -69,7 +69,7 @@ sp.evolve(t)
 Inode_number_vector = sp.get_Inode_number_vector()
 time_vector = sp.get_time_vector()
 
-#format 
+#format
 prevalence_vector = [i/N for i in Inode_number_vector]
 
 #draw the temporal sequence
@@ -97,7 +97,7 @@ p = 0.05
 G = nx.watts_strogatz_graph(N, k, p, seed=seed)
 
 #propagation parameters
-transmission_rate_list = np.linspace(0.0,0.5,10)         
+transmission_rate_list = np.linspace(0.0,0.5,10)
 recovery_rate = 1           #rate at which infected nodes become recovered
 waning_immunity_rate = 0    #rate at which recovered nodes become susceptible
 Inode_list = np.arange(0,5) #Initially infected nodes
@@ -109,30 +109,30 @@ std_final_size_list = []
 
 for transmission_rate in transmission_rate_list:
     #initialize the propagation process
-    sp = SpreadingProcess(list(G.edges()), transmission_rate, 
+    sp = SpreadingProcess(list(G.edges()), transmission_rate,
                             recovery_rate, waning_immunity_rate)
-    
+
     #get a sample of final size
     final_size_list = []
     for i in range(sample_size):
         #simulate until an absorbing state is reached
         sp.initialize(Inode_list, i)
         sp.evolve(np.inf)
-        
+
         #get data and reset
         final_size_list.append(sp.get_Rnode_number_vector()[-1]/N)
         sp.reset()
-    
+
     #get the statistics
     mean_final_size_list.append(np.mean(final_size_list))
     std_final_size_list.append(np.std(final_size_list))
 
 #get the approximate std on the mean
-std_mean_final_size_list = [std/np.sqrt(sample_size) 
+std_mean_final_size_list = [std/np.sqrt(sample_size)
                             for std in std_final_size_list]
 
 #draw phase transition
-plt.errorbar(transmission_rate_list, mean_final_size_list, 
+plt.errorbar(transmission_rate_list, mean_final_size_list,
              yerr = std_mean_final_size_list, fmt = 'o-')
 plt.xlabel(r'Transmission rate')
 plt.ylabel(r'Mean final size')
@@ -205,7 +205,7 @@ Inode_list = np.arange(0,1) #Initially infected nodes
 Rnode_list = [5]
 
 #initialize spreading process and evolve until an frozen state is reached
-sp = SpreadingProcess(list(G.edges()),transmission_rate, 
+sp = SpreadingProcess(list(G.edges()),transmission_rate,
                             recovery_rate,waning_immunity_rate)
 sp.initialize(Inode_list, Rnode_list, seed)
 sp.evolve(np.inf)
@@ -219,4 +219,54 @@ pos = nx.spectral_layout(G)
 pos = nx.spring_layout(G,pos=pos)
 nx.draw_networkx_nodes(G,pos=pos,node_color=node_color,edgecolors='k')
 nx.draw_networkx_edges(G,pos=pos)
+```
+
+### Estimation of the basic reproduction number R0
+
+The basic reproduction number gives the average number of secondary cases in with a fully susceptible population.
+To estimate it, we infect randomly a single node. If it sucessfully infect a second node, we track the number
+of new infection cases this second node causes. We repeat this process multiple
+times to estimate the average and standard deviation associated with the basic
+reproduction number.
+
+***Note :*** although evident, one must use a transmission rate greater than 0.
+```python
+from spreading_CR import SpreadingProcess
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+
+#create a random graph using networkx
+seed = 42
+N = 1000
+k = 10
+p = 0.05
+G = nx.watts_strogatz_graph(N, k, p, seed=seed)
+
+#propagation parameters
+transmission_rate_list = np.linspace(0.1,0.4,20) #important, transmission rate > 0
+recovery_rate = 1           #rate at which infected nodes become recovered
+waning_immunity_rate = 0    #rate at which recovered nodes become susceptible
+
+#prepare the list for the R0 estimates
+sample = 10000 #number of sample for R0
+R0_mean_list = []
+R0_std_list = []
+
+for transmission_rate in transmission_rate_list:
+    #initialize the propagation process
+    sp = SpreadingProcess(list(G.edges()), transmission_rate,
+                            recovery_rate, waning_immunity_rate)
+    R0_mean,R0_std = sp.estimate_R0(sample,seed)
+    R0_mean_list.append(R0_mean)
+    R0_std_list.append(R0_std/np.sqrt(sample)) #standard error
+
+#draw R0 for different parameters
+plt.errorbar(transmission_rate_list, R0_mean_list,
+             yerr = R0_std_list, fmt = 'o-')
+plt.plot([min(transmission_rate_list),max(transmission_rate_list)],
+        [1,1], '--', color='grey')
+plt.xlabel(r'Transmission rate')
+plt.ylabel(r'$R_0$ estimate')
+plt.show()
 ```
