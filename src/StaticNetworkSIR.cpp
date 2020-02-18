@@ -209,6 +209,9 @@ void StaticNetworkSIR::reset()
             inert_node_vector_.pop_back();
         }
     }
+
+    //make sure the binary tree have zero values everywhere
+    event_tree_.clear();
 }
 
 /**
