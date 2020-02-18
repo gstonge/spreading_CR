@@ -34,14 +34,18 @@ namespace net
 
 //Default constructor of the class BinaryTree
 BinaryTree::BinaryTree() :
-    current_node_(nullptr), root_(nullptr), leaves_vector_(),
+    root_(nullptr),
+    current_node_(nullptr),
+    leaves_vector_(),
     leaves_index_map_()
 {
 }
 
 //Constructor of the class BinaryTree with specified leaves number
 BinaryTree::BinaryTree(unsigned int n_leaves) :
-    current_node_(nullptr), root_(nullptr), leaves_vector_(),
+    root_(nullptr),
+    current_node_(nullptr),
+    leaves_vector_(),
     leaves_index_map_()
 {
     if (n_leaves < 1)
@@ -62,7 +66,9 @@ BinaryTree::BinaryTree(unsigned int n_leaves) :
 
 //Copy constructor of the class BinaryTree
 BinaryTree::BinaryTree(const BinaryTree& tree) :
-    current_node_(nullptr), root_(nullptr), leaves_vector_(),
+    root_(nullptr),
+    current_node_(nullptr),
+    leaves_vector_(),
     leaves_index_map_()
 {
     //Construct a new tree with n_leaves
@@ -90,6 +96,8 @@ BinaryTree& BinaryTree::operator=(const BinaryTree& tree)
 {
     //destroy the current tree
     this->destroy_tree(root_);
+    this->leaves_vector_.clear();
+    this->leaves_index_map_.clear();
 
     //Construct a new tree with n_leaves
     unsigned int n_leaves = tree.leaves_vector_.size();
@@ -207,6 +215,33 @@ void BinaryTree::update_value(double variation)
     else
     {
         cout << "not a leaf" << endl;
+    }
+}
+
+void BinaryTree::update_zero()
+{
+    if (is_leaf())
+    {
+        (current_node_->value) = 0;
+        while(not is_root())
+        {
+            move_up();
+            (current_node_->value) = 0;
+        }
+    }
+    else
+    {
+        cout << "not a leaf" << endl;
+    }
+}
+
+//remove value for all nodes
+void BinaryTree::clear()
+{
+    for (auto& leaf : leaves_vector_)
+    {
+        move_at(leaf);
+        update_zero();
     }
 }
 
