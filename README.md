@@ -1,6 +1,6 @@
 # spreading_CR
 
-Gillespie algorithm for the simulation of Markovian spreading processes on static complex networks using a composition and rejection scheme. The core is implemented in C++ for efficiency. A user friendly python interface is provided, thanks to pybind11 (https://github.com/pybind/pybind11).
+Gillespie algorithm for the simulation of Markovian spreading processes on static complex networks using a composition and rejection scheme. The core is implemented in C++ for efficiency. A user-friendly python interface is provided, thanks to pybind11 (https://github.com/pybind/pybind11).
 
 ## Requirements
 
@@ -36,7 +36,9 @@ The following examples make use of the networkx module (https://github.com/netwo
 
 ### Time evolution : SIS model
 
-In this example, we consider the SIS model on an Erdős–Rényi random graph. A certain fraction of the nodes are infected initially at random. We draw the evolution of the prevalence as a function of time.
+In this example, we consider the SIS model on an Erdős–Rényi random graph.
+A certain fraction of the nodes are infected initially at random.
+We draw the evolution of the prevalence as a function of time.
 
 ```python
 from spreading_CR import SpreadingProcess
@@ -81,7 +83,9 @@ plt.show()
 
 ### Phase transition : SIR model
 
-In this example, we consider the SIR model on the Watts-Strogatz random graph. A certain specified list of nodes are initially infected. We sample the final size--the fraction of recovered nodes at the end--for different transmission rates. We draw the final size as a function of the transmission rate to discern the phase transition.
+In this example, we consider the SIR model on the Watts-Strogatz random graph.
+A certain specified list of nodes are initially infected. We sample the final size--the fraction of recovered nodes at the end--for different transmission rates.
+We draw the final size as a function of the transmission rate to discern the phase transition.
 
 ```python
 from spreading_CR import SpreadingProcess
@@ -141,7 +145,9 @@ plt.show()
 
 ### Get recovered nodes set : SIR model
 
-In this example, we consider the SIR model on the Watts-Strogatz random graph. A certain specified list of nodes are initially infected. We illustrate the set of recovered nodes at the end of the process.
+In this example, we consider the SIR model on the Watts-Strogatz random graph.
+A certain specified list of nodes are initially infected.
+We illustrate the set of recovered nodes at the end of the process.
 ```python
 from spreading_CR import SpreadingProcess
 import numpy as np
@@ -178,13 +184,13 @@ nx.draw_networkx_nodes(G,pos=pos,node_color=node_color,edgecolors='k')
 nx.draw_networkx_edges(G,pos=pos)
 ```
 
-### Initialize the network with recovered (immuned) nodes
+### Initialize the network with recovered (immunized) nodes
 
-In this example, we consider the SIR model on a chain. Node number 5 is immuned
+In this example, we consider the SIR model on a chain. Node number 5 is immunized
 and node 0 is initially infected. We illustrate the set of recovered nodes at the end of the process.
 
 ***Note :*** this immunization method is more efficient for sampling than directly changing
-the structure (removing edges connected to an immuned node). Indeed, one can
+the structure (removing edges connected to an immunized node). Indeed, one can
 keep the same object `SpreadingProcess` all along.
 ```python
 from spreading_CR import SpreadingProcess
@@ -223,11 +229,10 @@ nx.draw_networkx_edges(G,pos=pos)
 
 ### Estimation of the basic reproduction number R0
 
-The basic reproduction number gives the average number of secondary cases in with a fully susceptible population.
-To estimate it, we infect randomly a single node. If it sucessfully infect a second node, we track the number
-of new infection cases this second node causes. We repeat this process multiple
-times to estimate the average and standard deviation associated with the basic
-reproduction number.
+The basic reproduction number gives the average number of secondary cases in a network with a fully susceptible population.
+To estimate it, we infect a randomly chosen single node.
+If it successfully infects a second node, we track the number of new infection cases this second node causes.
+We repeat this process multiple times to estimate the average and standard deviation associated with the basic reproduction number.
 
 ***Note :*** although evident, one must use a transmission rate greater than 0.
 ```python
