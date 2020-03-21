@@ -93,12 +93,12 @@ void SpreadingProcess::initialize_random(double fraction, unsigned int seed)
 * \brief Initialize the state of the system with specified infected nodes
 * \param[in] Inode_vector vector of NodeLabel for each initially infected node
 */
-void SpreadingProcess::initialize(vector<NodeLabel>& Inode_vector,
+void SpreadingProcess::initialize(const vector<NodeLabel>& Inode_vector,
         unsigned int seed)
 {
     for (int i=0; i<Inode_vector.size(); i++)
     {
-    	network_.infection(Inode_vector[i]);
+    	network_.infection(Inode_vector.at(i));
     }
     gen_.seed(seed);
     time_vector_.push_back(0);
@@ -112,16 +112,16 @@ void SpreadingProcess::initialize(vector<NodeLabel>& Inode_vector,
 * \param[in] Inode_vector vector of NodeLabel for each initially infected node
 * \param[in] Rnode_vector vector of NodeLabel for each initially recovered node
 */
-void SpreadingProcess::initialize(vector<NodeLabel>& Inode_vector,
-        std::vector<NodeLabel>& Rnode_vector, unsigned int seed)
+void SpreadingProcess::initialize(const vector<NodeLabel>& Inode_vector,
+        const std::vector<NodeLabel>& Rnode_vector, unsigned int seed)
 {
     for (int i=0; i<Inode_vector.size(); i++)
     {
-    	network_.infection(Inode_vector[i]);
+    	network_.infection(Inode_vector.at(i));
     }
     for (int i=0; i<Rnode_vector.size(); i++)
     {
-    	network_.set_recovered(Rnode_vector[i]);
+    	network_.set_recovered(Rnode_vector.at(i));
     }
     gen_.seed(seed);
     time_vector_.push_back(0);
@@ -183,7 +183,7 @@ void SpreadingProcess::evolve(double time_variation)
 }
 
 pair<double,double> SpreadingProcess::estimate_R0(unsigned int sample,
-        unsigned int seed)
+        unsigned int seed, const vector<NodeLabel>& Rnode_vector)
 {
     if (network_.get_transmission_rate() <= 0)
     {
@@ -200,9 +200,26 @@ pair<double,double> SpreadingProcess::estimate_R0(unsigned int sample,
     while (i < sample)
     {
         reset();
-        //infect a random node
-		source_node = floor(random_01_(gen_)*network_.size());
-        network_.infection(source_node);
+        //initialize network with recovered people
+        if (Rnode_vector.size() > 0)
+        {
+            //initialize manually
+            for (int i=0; i<Rnode_vector.size(); i++)
+            {
+                network_.set_recovered(Rnode_vector.at(i));
+            }
+        }
+        //infect a random node (not recovered)
+        bool source_found = false;
+        while (not source_found)
+        {
+		    source_node = floor(random_01_(gen_)*network_.size());
+            if (network_.is_susceptible(source_node))
+            {
+                source_found = true;
+                network_.infection(source_node);
+            }
+        }
         time_vector_.push_back(0);
         Inode_number_vector_.push_back(network_.get_Inode_number());
         Rnode_number_vector_.push_back(network_.get_Rnode_number());

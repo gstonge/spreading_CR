@@ -85,7 +85,7 @@ PYBIND11_MODULE(spreading_CR, m)
                seed: Integer seed for the random number generator.
             )pbdoc", py::arg("fraction"), py::arg("seed"))
 
-        .def("initialize", (void (SpreadingProcess::*)(vector<NodeLabel>&,
+        .def("initialize", (void (SpreadingProcess::*)(const vector<NodeLabel>&,
             unsigned int)) &SpreadingProcess::initialize, R"pbdoc(
             Initialize the spreading process.
 
@@ -94,8 +94,8 @@ PYBIND11_MODULE(spreading_CR, m)
                seed: Integer seed for the random number generator.
             )pbdoc", py::arg("Inode_vector"), py::arg("seed"))
 
-        .def("initialize", (void (SpreadingProcess::*)(vector<NodeLabel>&,
-            vector<NodeLabel>&,unsigned int)) &SpreadingProcess::initialize, R"pbdoc(
+        .def("initialize", (void (SpreadingProcess::*)(const vector<NodeLabel>&,
+            const vector<NodeLabel>&,unsigned int)) &SpreadingProcess::initialize, R"pbdoc(
             Initialize the spreading process.
 
             Args:
@@ -127,6 +127,8 @@ PYBIND11_MODULE(spreading_CR, m)
             Args:
                sample: Integer for the number of samples to draw.
                seed: Integer seed for the random number generator.
-            )pbdoc", py::arg("sample"), py::arg("seed"));
+               Rnode_vector: List of nodes to be recovered initially.
+            )pbdoc", py::arg("sample"), py::arg("seed"),
+                py::arg("Rnode_vector") = vector<NodeLabel>());
 
 }
