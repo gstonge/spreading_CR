@@ -54,16 +54,17 @@ public:
     void set_tracing(bool tracing)
         {tracing_ = tracing;}
     void initialize_random(double fraction, unsigned int seed);
-    void initialize(std::vector<NodeLabel>& Inode_vector,
+    void initialize(const std::vector<NodeLabel>& Inode_vector,
             unsigned int seed);
-    void initialize(std::vector<NodeLabel>& Inode_vector,
-            std::vector<NodeLabel>& Rnode_vector,
+    void initialize(const std::vector<NodeLabel>& Inode_vector,
+            const std::vector<NodeLabel>& Rnode_vector,
             unsigned int seed);
     void reset();
     void next_state();
     void evolve(double time_variation);
     std::pair<double,double> estimate_R0(unsigned int sample,
-            unsigned int seed = 42);
+            unsigned int seed = 42,
+            const std::vector<NodeLabel>& Rnode_vector = std::vector<NodeLabel>());
 
 private:
     StaticNetworkSIR network_;

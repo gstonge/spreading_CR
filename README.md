@@ -227,12 +227,15 @@ nx.draw_networkx_nodes(G,pos=pos,node_color=node_color,edgecolors='k')
 nx.draw_networkx_edges(G,pos=pos)
 ```
 
-### Estimation of the basic reproduction number R0
+### Estimation of the basic reproduction number R0 or an effective one Reff
 
 The basic reproduction number gives the average number of secondary cases in a network with a fully susceptible population.
 To estimate it, we infect a randomly chosen single node.
 If it successfully infects a second node, we track the number of new infection cases this second node causes.
 We repeat this process multiple times to estimate the average and standard deviation associated with the basic reproduction number.
+
+We can also specify a list of recovered nodes to obtain an effective
+reproduction number.
 
 ***Note :*** although evident, one must use a transmission rate greater than 0.
 ```python
@@ -258,22 +261,36 @@ sample = 10000 #number of sample for R0
 R0_mean_list = []
 R0_std_list = []
 
+#do the same for Reff where some nodes are recovered at the beginning
+Reff_mean_list = []
+Reff_std_list = []
+nb_recovered = 200
+Rnode_list = np.random.randint(0,N,nb_recovered)
+
 i = 0
 for transmission_rate in transmission_rate_list:
     #initialize the propagation process
     sp = SpreadingProcess(list(G.edges()), transmission_rate,
                             recovery_rate, waning_immunity_rate)
+    #R0 estimate
     R0_mean,R0_std = sp.estimate_R0(sample,seed+i)
     R0_mean_list.append(R0_mean)
     R0_std_list.append(R0_std/np.sqrt(sample)) #standard error
-    i+=1
+    #Reff estimate
+    Reff_mean,Reff_std = sp.estimate_R0(sample,seed+i,Rnode_list)
+    Reff_mean_list.append(Reff_mean)
+    Reff_std_list.append(Reff_std/np.sqrt(sample)) #standard error
+    i += 1
 
-#draw R0 for different parameters
+#draw R0 and Reff for different parameters
 plt.errorbar(transmission_rate_list, R0_mean_list,
-             yerr = R0_std_list, fmt = 'o-')
+             yerr = R0_std_list, fmt = 'o-', label='$R_0$')
+plt.errorbar(transmission_rate_list, Reff_mean_list,
+             yerr = Reff_std_list, fmt = 'o-',  label='$R_\mathrm{eff}$')
 plt.plot([min(transmission_rate_list),max(transmission_rate_list)],
         [1,1], '--', color='grey')
 plt.xlabel(r'Transmission rate')
 plt.ylabel(r'$R_0$ estimate')
+plt.legend()
 plt.show()
 ```
