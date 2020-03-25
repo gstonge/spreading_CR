@@ -59,6 +59,13 @@ public:
     void initialize(const std::vector<NodeLabel>& Inode_vector,
             const std::vector<NodeLabel>& Rnode_vector,
             unsigned int seed);
+    //without reseeding
+    void initialize(const std::vector<NodeLabel>& Inode_vector);
+    void initialize(const std::vector<NodeLabel>& Inode_vector,
+            const std::vector<NodeLabel>& Rnode_vector);
+
+
+
     void reset();
     void next_state();
     void evolve(double time_variation);

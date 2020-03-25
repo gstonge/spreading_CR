@@ -107,6 +107,22 @@ void SpreadingProcess::initialize(const vector<NodeLabel>& Inode_vector,
 }
 
 /**
+* \brief Initialize the state of the system with specified infected nodes
+* \param[in] Inode_vector vector of NodeLabel for each initially infected node
+*/
+void SpreadingProcess::initialize(const vector<NodeLabel>& Inode_vector)
+{
+    for (int i=0; i<Inode_vector.size(); i++)
+    {
+    	network_.infection(Inode_vector.at(i));
+    }
+    time_vector_.push_back(0);
+    Inode_number_vector_.push_back(network_.get_Inode_number());
+    Rnode_number_vector_.push_back(network_.get_Rnode_number());
+}
+
+
+/**
 * \brief Initialize the state of the system with specified infected and
 * recovered nodes
 * \param[in] Inode_vector vector of NodeLabel for each initially infected node
@@ -128,6 +144,29 @@ void SpreadingProcess::initialize(const vector<NodeLabel>& Inode_vector,
     Inode_number_vector_.push_back(network_.get_Inode_number());
     Rnode_number_vector_.push_back(network_.get_Rnode_number());
 }
+
+/**
+* \brief Initialize the state of the system with specified infected and
+* recovered nodes
+* \param[in] Inode_vector vector of NodeLabel for each initially infected node
+* \param[in] Rnode_vector vector of NodeLabel for each initially recovered node
+*/
+void SpreadingProcess::initialize(const vector<NodeLabel>& Inode_vector,
+        const std::vector<NodeLabel>& Rnode_vector)
+{
+    for (int i=0; i<Inode_vector.size(); i++)
+    {
+    	network_.infection(Inode_vector.at(i));
+    }
+    for (int i=0; i<Rnode_vector.size(); i++)
+    {
+    	network_.set_recovered(Rnode_vector.at(i));
+    }
+    time_vector_.push_back(0);
+    Inode_number_vector_.push_back(network_.get_Inode_number());
+    Rnode_number_vector_.push_back(network_.get_Rnode_number());
+}
+
 
 /**
 * \brief Reset the process
