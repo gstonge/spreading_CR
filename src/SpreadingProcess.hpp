@@ -65,13 +65,14 @@ public:
             const std::vector<NodeLabel>& Rnode_vector);
 
 
-
     void reset();
     void next_state();
     void evolve(double time_variation);
     std::pair<double,double> estimate_R0(unsigned int sample,
             unsigned int seed = 42,
             const std::vector<NodeLabel>& Rnode_vector = std::vector<NodeLabel>());
+    std::vector<double> final_size_sample(unsigned int sample, unsigned int seed,
+            double threshold = 1e-4);
 
 private:
     StaticNetworkSIR network_;
