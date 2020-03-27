@@ -64,6 +64,15 @@ public:
     const std::unordered_set<NodeLabel>& get_Rnode_set() const
         {return state_set_vector_.at(2);}
 
+    const bool is_SI() const
+        {return is_SI_;}
+    const bool is_SIS() const
+        {return is_SIS_;}
+    const bool is_SIR() const
+        {return is_SIR_;}
+    const bool is_SIRS() const
+        {return is_SIRS_;}
+
     double get_transmission_rate() const
         {return transmission_rate_;}
     double get_recovery_rate() const
@@ -72,7 +81,7 @@ public:
         {return waning_immunity_rate_;}
     double prevalence() const
         {return ((1.*Inode_number_)/Network::size());}
-    double incidence() const
+    double final_size() const
         {return ((1.*Rnode_number_)/Network::size());}
     std::size_t get_Inode_number() const
         {return Inode_number_;}

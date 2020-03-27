@@ -11,6 +11,7 @@
 #include <iostream>
 #include <cmath>
 #include <exception>
+#include <stdexcept>
 
 using namespace std;
 
@@ -300,5 +301,33 @@ pair<double,double> SpreadingProcess::estimate_R0(unsigned int sample,
     return make_pair(R0_mean,R0_std);
 }
 
+vector<double> SpreadingProcess::final_size_sample(unsigned int sample,
+        unsigned int seed, double threshold)
+{
+    if (not network_.is_SIR())
+    {
+        throw runtime_error("Must be SIR process");
+    }
+    gen_.seed(seed);
+    vector<NodeLabel> Inode_vector;
+    vector<double> final_size_vector;
+    for (unsigned int i = 0; i < sample; i++)
+    {
+        reset();
+        //get initial infected node
+        NodeLabel source_node = floor(random_01_(gen_)*network_.size());
+        Inode_vector.push_back(source_node);
+        initialize(Inode_vector);
+        evolve(numeric_limits<double>::infinity());
+        if (network_.final_size() > threshold)
+        {
+            final_size_vector.push_back(network_.final_size());
+        }
+        Inode_vector.clear();
+    }
+    reset();
+
+    return final_size_vector;
+}
 
 }//end of namespace net

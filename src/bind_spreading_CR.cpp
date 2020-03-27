@@ -140,13 +140,21 @@ PYBIND11_MODULE(spreading_CR, m)
             )pbdoc", py::arg("time_variation"))
 
         .def("estimate_R0", &SpreadingProcess::estimate_R0, R"pbdoc(
-            Let the system evolve for a time duration.
+            Estimate the basic reproduction number.
 
             Args:
                sample: Integer for the number of samples to draw.
                seed: Integer seed for the random number generator.
                Rnode_vector: List of nodes to be recovered initially.
             )pbdoc", py::arg("sample"), py::arg("seed"),
-                py::arg("Rnode_vector") = vector<NodeLabel>());
+                py::arg("Rnode_vector") = vector<NodeLabel>())
 
+        .def("final_size_sample", &SpreadingProcess::final_size_sample, R"pbdoc(
+            Get a vector of final size sample for the SIR.
+
+            Args:
+               sample: Integer for the number of samples to draw.
+               seed: Integer seed for the random number generator.
+               threshold: Double for min final size to keep.
+            )pbdoc", py::arg("sample"), py::arg("seed"), py::arg("threshold") = 1e-4);
 }
