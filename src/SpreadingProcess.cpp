@@ -195,7 +195,8 @@ void SpreadingProcess::next_state()
     	    dt += get_lifetime(network_, gen_, log_table_);
     	    update_event(network_, gen_, random_01_, transmission_vector_,
                     tracing_);
-            if (network_.get_Inode_number() != Inode_number_vector_.back())
+            if (network_.get_Inode_number() != Inode_number_vector_.back()
+                    or network_.get_Rnode_number() != Rnode_number_vector_.back())
     	    {
     	        new_state = true;
     	    }

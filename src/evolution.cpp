@@ -141,20 +141,20 @@ double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
  * \param[in] history_vector vector of network state
  * \param[in] gen a reference to a random number generator
  */
-void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
-	vector<Configuration>& history_vector, RNGType& gen)
-{
-	size_t M = history_vector.size();
-	if (M >= max_configuration)
-	{
-		uniform_int_distribution<int> random_index(0, M-1);
-		size_t index = random_index(gen);
-		swap(history_vector[index],history_vector[M-1]);
-		history_vector.pop_back();
-	}
-	history_vector.push_back(Configuration());
-	net.get_configuration_copy(history_vector[M-1]);
-}
+//void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
+	//vector<Configuration>& history_vector, RNGType& gen)
+//{
+	//size_t M = history_vector.size();
+	//if (M >= max_configuration)
+	//{
+		//uniform_int_distribution<int> random_index(0, M-1);
+		//size_t index = random_index(gen);
+		//swap(history_vector[index],history_vector[M-1]);
+		//history_vector.pop_back();
+	//}
+	//history_vector.push_back(Configuration());
+	//net.get_configuration_copy(history_vector[M-1]);
+//}
 
 /**
  * \brief Get a random state from the history
@@ -162,13 +162,13 @@ void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
  * \param[in] history_vector vector of network state
  * \param[in] gen a reference to a random number generator
  */
-void get_from_history(StaticNetworkSIR& net,
-	vector<Configuration>& history_vector, RNGType& gen)
-{
-	size_t M = history_vector.size();
-	uniform_int_distribution<int> random_index(0, M-1);
-	size_t index = random_index(gen);
-	net.set_configuration(history_vector[index]);
-}
+//void get_from_history(StaticNetworkSIR& net,
+	//vector<Configuration>& history_vector, RNGType& gen)
+//{
+	//size_t M = history_vector.size();
+	//uniform_int_distribution<int> random_index(0, M-1);
+	//size_t index = random_index(gen);
+	//net.set_configuration(history_vector[index]);
+//}
 
 } //end of namespace

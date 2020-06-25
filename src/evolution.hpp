@@ -39,11 +39,11 @@ double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
 double get_lifetime(StaticNetworkSIR& net, RNGType& gen,
         double (&log_table)[TABLE_SIZE]);
 
-void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
-	std::vector<Configuration>& history_vector, RNGType& gen);
+//void update_history(StaticNetworkSIR& net, unsigned int max_configuration,
+	//std::vector<Configuration>& history_vector, RNGType& gen);
 
-void get_from_history(StaticNetworkSIR& net,
-	std::vector<Configuration>& history_vector, RNGType& gen);
+//void get_from_history(StaticNetworkSIR& net,
+	//std::vector<Configuration>& history_vector, RNGType& gen);
 
 }//end of namespace net
 

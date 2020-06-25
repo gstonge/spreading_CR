@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <SpreadingProcess.hpp>
+#include <QSSpreadingProcess.hpp>
 
 using namespace std;
 using namespace net;
@@ -32,7 +33,7 @@ PYBIND11_MODULE(spreading_CR, m)
     )pbdoc";
 
     py::class_<SpreadingProcess>(m, "SpreadingProcess")
-        .def(py::init<vector<std::pair<NodeLabel, NodeLabel> >&,
+        .def(py::init<vector<pair<NodeLabel, NodeLabel> >&,
             double, double, double, double>(), R"pbdoc(
             This is the constructor of the class.
 
@@ -43,6 +44,7 @@ PYBIND11_MODULE(spreading_CR, m)
                waning_immunity_rate: Rate for immunity loss. For the SIR model
                    the rate must be set to 0. For the SIS model, set it to
                    numpy.inf.
+               base: Base (logarithm) for the event tree
             )pbdoc", py::arg("edge_list"), py::arg("transmission_rate"),
             py::arg("recovery_rate"), py::arg("waning_immunity_rate"),
             py::arg("base") = 2)
@@ -60,6 +62,18 @@ PYBIND11_MODULE(spreading_CR, m)
             &SpreadingProcess::get_Rnode_number_vector, R"pbdoc(
             Returns the vector of number of recovered nodes for each event.
             )pbdoc")
+
+        .def("get_Inode_number",
+            &SpreadingProcess::get_Inode_number, R"pbdoc(
+            Returns the number of recovered nodes.
+            )pbdoc")
+
+        .def("get_Rnode_number",
+            &SpreadingProcess::get_Rnode_number, R"pbdoc(
+            Returns the number of recovered nodes.
+            )pbdoc")
+
+
 
         .def("is_absorbed", &SpreadingProcess::is_absorbed, R"pbdoc(
             Returns true if the system has reached an absorbing state.
@@ -95,7 +109,7 @@ PYBIND11_MODULE(spreading_CR, m)
             )pbdoc", py::arg("Inode_vector"), py::arg("seed"))
 
         .def("initialize", (void (SpreadingProcess::*)(const vector<NodeLabel>&,
-            const vector<NodeLabel>&,unsigned int)) &SpreadingProcess::initialize, R"pbdoc(
+            const vector<NodeLabel>&,unsigned int)) &SpreadingProcess::initialize,              R"pbdoc(
             Initialize the spreading process.
 
             Args:
@@ -157,4 +171,89 @@ PYBIND11_MODULE(spreading_CR, m)
                seed: Integer seed for the random number generator.
                threshold: Double for min final size to keep.
             )pbdoc", py::arg("sample"), py::arg("seed"), py::arg("threshold") = 1e-4);
+
+    /* =====================================
+     * Class deriving from SpreadingProcess
+     * =====================================*/
+
+    py::class_<QSSpreadingProcess, SpreadingProcess>(m, "QSSpreadingProcess")
+
+        .def(py::init<vector<pair<NodeLabel, NodeLabel> >&, double, double,
+                double,double,double,unsigned int>(), R"pbdoc(
+            Args:
+               edge_list: Edge list of the network.
+               transmission_rate: Rate of transmission per edge.
+               recovery_rate: Rate of recovery of infected nodes.
+               waning_immunity_rate: Rate for immunity loss. For the SIR model
+                   the rate must be set to 0. For the SIS model, set it to
+                   numpy.inf.
+               base: Base (logarithm) for the event tree.
+               update_history_rate: Rate to store current state in history.
+               history_vector_size: History vector size.
+            )pbdoc", py::arg("edge_list"), py::arg("transmission_rate"),
+            py::arg("recovery_rate"), py::arg("waning_immunity_rate"),
+            py::arg("base") = 2, py::arg("update_history_rate") = 0.1,
+            py::arg("history_vector_size") = 100)
+
+        .def("initialize_random", &QSSpreadingProcess::initialize_random, R"pbdoc(
+            Initialize the spreading process with randomly infected nodes.
+
+            Args:
+               fraction: Initial fraction of infected nodes.
+               seed: Integer seed for the random number generator.
+            )pbdoc", py::arg("fraction"), py::arg("seed"))
+
+        .def("initialize", (void (QSSpreadingProcess::*)(const vector<NodeLabel>&,
+            unsigned int)) &SpreadingProcess::initialize, R"pbdoc(
+            Initialize the spreading process.
+
+            Args:
+               Inode_vector: List of nodes to be infected initially.
+               seed: Integer seed for the random number generator.
+            )pbdoc", py::arg("Inode_vector"), py::arg("seed"))
+
+        .def("initialize", (void (QSSpreadingProcess::*)(const vector<NodeLabel>&,
+            const vector<NodeLabel>&,unsigned int)) &SpreadingProcess::initialize,              R"pbdoc(
+            Initialize the spreading process.
+
+            Args:
+               Inode_vector: List of nodes to be infected initially.
+               Rnode_vector: List of nodes to be recovered initially.
+               seed: Integer seed for the random number generator.
+            )pbdoc", py::arg("Inode_vector"), py::arg("Rnode_vector"),
+                py::arg("seed"))
+
+        .def("initialize", (void (QSSpreadingProcess::*)(const vector<NodeLabel>&)
+                    ) &SpreadingProcess::initialize, R"pbdoc(
+            Initialize the spreading process.
+
+            Args:
+               Inode_vector: List of nodes to be infected initially.
+            )pbdoc", py::arg("Inode_vector"))
+
+        .def("initialize", (void (QSSpreadingProcess::*)(const vector<NodeLabel>&,
+            const vector<NodeLabel>&)) &SpreadingProcess::initialize, R"pbdoc(
+            Initialize the spreading process.
+
+            Args:
+               Inode_vector: List of nodes to be infected initially.
+               Rnode_vector: List of nodes to be recovered initially.
+               seed: Integer seed for the random number generator.
+            )pbdoc", py::arg("Inode_vector"), py::arg("Rnode_vector"))
+
+        .def("set_update_history_rate", &QSSpreadingProcess::set_update_history_rate,
+                R"pbdoc(
+            Set a new value for the update history rate.
+            )pbdoc")
+
+        .def("reset", &QSSpreadingProcess::reset, R"pbdoc(
+            Reset the spreading process. It needs to be initialized again.
+            )pbdoc")
+
+        .def("evolve", &QSSpreadingProcess::evolve, R"pbdoc(
+            Let the system evolve for a time duration.
+
+            Args:
+               time_variation: Time duration for the simulation.
+            )pbdoc", py::arg("time_variation"));
 }

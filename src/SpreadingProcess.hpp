@@ -37,6 +37,8 @@ public:
     	{return Inode_number_vector_;}
     std::vector<unsigned int> get_Rnode_number_vector() const
     	{return Rnode_number_vector_;}
+    size_t get_Inode_number() const
+        {return network_.get_Inode_number();}
     size_t get_Rnode_number() const
         {return network_.get_Rnode_number();}
     size_t get_size() const
@@ -74,7 +76,7 @@ public:
     std::vector<double> final_size_sample(unsigned int sample, unsigned int seed,
             double threshold = 1e-4);
 
-private:
+protected:
     StaticNetworkSIR network_;
     RNGType gen_;
     std::uniform_real_distribution<double> random_01_;

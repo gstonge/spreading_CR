@@ -28,13 +28,7 @@ typedef size_t GroupIndex;
 //Define structure for configuration (dynamical state)
 struct Configuration
 {
-    std::vector<StateLabel> state_vector;
     std::vector<std::unordered_set<NodeLabel>> state_set_vector;
-    std::vector<NodeLabel> inert_node_vector;
-    BinaryTree event_tree;
-    std::unordered_map<GroupIndex,PropensityGroup> propensity_group_map;
-    std::size_t Inode_number;
-    std::size_t Rnode_number;
 };
 
 /**

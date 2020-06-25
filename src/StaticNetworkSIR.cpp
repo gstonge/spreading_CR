@@ -155,13 +155,7 @@ StaticNetworkSIR::StaticNetworkSIR(
 void StaticNetworkSIR::get_configuration_copy(
     Configuration& empty_configuration) const
 {
-    empty_configuration.state_vector = state_vector_;
     empty_configuration.state_set_vector = state_set_vector_;
-    empty_configuration.inert_node_vector = inert_node_vector_;
-    empty_configuration.event_tree = event_tree_;
-    empty_configuration.propensity_group_map = propensity_group_map_;
-    empty_configuration.Inode_number = Inode_number_;
-    empty_configuration.Rnode_number = Rnode_number_;
 }
 
 /*---------------------------
@@ -326,13 +320,20 @@ void StaticNetworkSIR::immunity_loss(GroupIndex group_index,
 */
 void StaticNetworkSIR::set_configuration(Configuration& configuration)
 {
-    state_vector_ = configuration.state_vector;
-    state_set_vector_ = configuration.state_set_vector;
-    inert_node_vector_ = configuration.inert_node_vector;
-    event_tree_ = configuration.event_tree;
-    propensity_group_map_ = configuration.propensity_group_map;
-    Inode_number_ = configuration.Inode_number;
-    Rnode_number_ = configuration.Rnode_number;
+    reset();
+    vector<unordered_set<NodeLabel>>& ssv = configuration.state_set_vector;
+    unordered_set<NodeLabel>& Inode_set = ssv[1];
+    unordered_set<NodeLabel>& Rnode_set = ssv[2];
+    //infected nodes
+    for (auto& node : Inode_set)
+    {
+        infection(node);
+    }
+    //recovered nodes
+    for (auto& node : Rnode_set)
+    {
+        set_recovered(node);
+    }
 }
 
 
