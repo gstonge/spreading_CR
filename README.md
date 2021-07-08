@@ -30,9 +30,16 @@ pip install -e ./spreading_CR
 ```
 for developer mode.
 
+## Important note
+
+We use the convention that nodes are labeled from 0 to N-1, where N is the
+number of nodes. Also, make sure node N-1 is of degree > 0, otherwise the code
+won't be able to infer correctly the network size when the edge list is passed.
+
+
 ## Examples
 
-The following examples make use of the networkx module (https://github.com/networkx) as well as standard python scientific modules.
+The following examples make use of the [networkx module](https://github.com/networkx) as well as standard python scientific modules.
 
 ### Time evolution : SIS model
 

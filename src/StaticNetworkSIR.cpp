@@ -36,6 +36,7 @@ StaticNetworkSIR::StaticNetworkSIR(
     state_vector_(Network::size(),0), Inode_number_(0), Rnode_number_(0),
     transmission_rate_(transmission_rate), recovery_rate_(recovery_rate),
     waning_immunity_rate_(waning_immunity_rate), event_tree_(), hash_(1.,1.),
+    waning_group_(0),
     max_propensity_vector_(), propensity_group_map_(), mapping_vector_(),
     is_SI_(false), is_SIS_(false), is_SIRS_(false), is_SIR_(false), base_(base),
     inert_node_vector_(), state_set_vector_(3,unordered_set<NodeLabel>())
@@ -128,17 +129,13 @@ StaticNetworkSIR::StaticNetworkSIR(
     max_propensity_vector_.pop_back();
     max_propensity_vector_.push_back(propensity_max);
 
-    //Set mapping vector for the groups
+    //Set mapping vector for the groups associated to infected nodes
     mapping_vector_.resize(1+degree_max);
     if (is_SIRS_)
     {
-        mapping_vector_[0] = hash_(waning_immunity_rate_);
+        waning_group_ = hash_(waning_immunity_rate_);
     }
-    else
-    {
-        mapping_vector_[0] = 0; //it wont be used anyway
-    }
-    for (int k = 1; k <= degree_max; k++)
+    for (int k = 0; k <= degree_max; k++)
     {
         mapping_vector_[k] = hash_(transmission_rate_*k + recovery_rate_);
     }
@@ -239,9 +236,9 @@ void StaticNetworkSIR::set_recovered(NodeLabel node)
         if (is_SIRS_)
         {
             //node can become again susceptible
-            propensity_group_map_[mapping_vector_[0]].push_back(
+            propensity_group_map_[waning_group_].push_back(
                 pair<NodeLabel,double>(node, waning_immunity_rate_));
-            event_tree_.update_value(mapping_vector_[0], waning_immunity_rate_);
+            event_tree_.update_value(waning_group_, waning_immunity_rate_);
         }
         else
         {
@@ -284,9 +281,9 @@ void StaticNetworkSIR::recovery(GroupIndex group_index,
         if (is_SIRS_)
         {
             //node can become again susceptible
-            propensity_group_map_[mapping_vector_[0]].push_back(
+            propensity_group_map_[waning_group_].push_back(
                 pair<NodeLabel,double>(node, waning_immunity_rate_));
-            event_tree_.update_value(mapping_vector_[0], waning_immunity_rate_);
+            event_tree_.update_value(waning_group_, waning_immunity_rate_);
         }
         else
         {

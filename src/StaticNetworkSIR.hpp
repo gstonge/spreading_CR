@@ -108,6 +108,7 @@ private:
     bool is_SIRS_;
     bool is_SIR_;
     HashPropensity hash_;
+    GroupIndex waning_group_;
     std::vector<double> max_propensity_vector_; //max propensity for each group
     std::vector<GroupIndex> mapping_vector_;
     //Varying members
